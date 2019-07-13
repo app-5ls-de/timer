@@ -13,4 +13,33 @@
     "prefer_related_applications" : "false",
     "generated" : "true",
     "icons" : [
+    "icons" : [
+        {
+            "src": "/ico/stopwatch 16px.png",
+            "sizes": "16x16"
+        },
+        {
+            "src": "/ico/stopwatch 24px.png",
+            "sizes": "24x24"
+        },
+        {
+            "src": "/ico/stopwatch 32px.png",
+            "sizes": "32x32"
+        },
+        {
+            "src": "/ico/stopwatch 64px.png",
+            "sizes": "64x64"
+        },
+        {
+            "src": "/ico/stopwatch 128px.png",
+            "sizes": "128x128"
+        },
+        {
+            "src": "/ico/stopwatch 256px.png",
+            "sizes": "256x256"
+        },
+        {
+            "src": "/ico/stopwatch 512px.png",
+            "sizes": "512x512"
+        }
     ]}
