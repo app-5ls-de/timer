@@ -3,7 +3,7 @@
     "name" : "Minimal Timer",
     "scope" : "/",
     "display" : "fullscreen",
-    "start_url" : "https://timerpwa.5ls.de/",
+    "start_url" : "https://timer.5ls.de/",
     "short_name" : "Timer",
     "theme_color" : "transparent",
     "description" : "Simple and miminal Timer",
