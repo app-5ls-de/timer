@@ -147,22 +147,30 @@ function show(dur) {
 
 function start() {
   console.log('start');
+  if (duration==null) {return}
   running=true;
   var now = moment(new Date());
 
-    console.log(now);
   startTime = now.subtract(moment.duration(duration));
   duration = null
+
+  var newURL = "/?r=1&t=" + startTime.format();
+  window.history.replaceState(null, null, newURL);
+
   update()
 }
 
 function stop() {
   console.log('stop');
+  if (startTime==null) {return}
   running=false;
   var now = moment(new Date());
-  duration = moment.duration(now.diff(startTime));//.toISOString();
+  duration = moment.duration(now.diff(startTime));
   startTime = null;
   show(duration);
+
+  var newURL = "/?r=0&d=" + duration.toISOString();;
+  window.history.replaceState(null, null, newURL);
 }
 
 function clear() {
@@ -172,6 +180,10 @@ function clear() {
   duration = moment.duration(0);
   show(duration);
 }
+
+
+
+
 
 function debug() {
   console.log('----------');
