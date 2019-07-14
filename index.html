@@ -96,34 +96,25 @@ var h1 = document.getElementsByTagName('time')[0],
     });
 
 
-
-//vars['t']='2019-07-13T20:43:19+02:00';
-//vars['d']='PT3M';
-//vars['r']='false';
-//vars['r']='true';
-
-
 function init(vars) {
-  if (vars['r']==null){return}
-  console.log('2');
-  var now = moment(new Date());
-  if (vars['r']==false & moment.isDuration(moment.duration(vars['d'])) & vars['t']==null){
 
-      console.log('11');
+  if (moment.isDuration(moment.duration(vars['d'])) & vars['t']==null & vars['r']=="0"){
+    running=false;
+    duration = moment.duration(vars['d']);
+    show(duration);
+    startTime = null;
   }
-  if (vars['r']==true & vars['d']==null & moment(vars['t']).isValid()){
-
-      console.log('22');
+  if (vars['d']==null & moment(vars['t']).isValid() & vars['r']=="1"){
+    running=true;
+    startTime = moment(vars['t']);
+    duration = null
+    update()
   }
-
 }
 
+
+
 init(vars);
-console.log('1');
-
-
-
-
 
 
 
@@ -144,10 +135,7 @@ function timer() {
 function show(dur) {
   var seconds = dur.seconds();
   var minutes = dur.minutes();
-  var hours = dur.hours();
-  var days = dur.days();
-  var months = dur.months();
-  var years = dur.years();
+  var hours = Math.floor(dur.asHours());
   h1.textContent = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" + (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
 }
 // timer();
@@ -165,7 +153,6 @@ function start() {
     console.log(now);
   startTime = now.subtract(moment.duration(duration));
   duration = null
-  debug()
   update()
 }
 
@@ -173,9 +160,9 @@ function stop() {
   console.log('stop');
   running=false;
   var now = moment(new Date());
-  duration = moment.duration(now.diff(startTime)).toISOString();
+  duration = moment.duration(now.diff(startTime));//.toISOString();
   startTime = null;
-  debug()
+  show(duration);
 }
 
 function clear() {
@@ -184,7 +171,6 @@ function clear() {
   startTime = null;
   duration = moment.duration(0);
   show(duration);
-  debug()
 }
 
 function debug() {
