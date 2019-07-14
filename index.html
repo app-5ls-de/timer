@@ -88,7 +88,7 @@ var h1 = document.getElementsByTagName('time')[0],
     bt_start = document.getElementById('start'),
     bt_stop = document.getElementById('stop'),
     bt_clear = document.getElementById('clear'),
-    startTime = null,running = null ,duration = null;
+    startTime = null,running=false ,duration = moment.duration(0);
 
     vars = {};
     var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
@@ -112,7 +112,7 @@ function init(vars) {
   }
 }
 
-
+show(duration);
 
 init(vars);
 
