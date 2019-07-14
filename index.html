@@ -169,7 +169,7 @@ function stop() {
   startTime = null;
   show(duration);
 
-  var newURL = "/?r=0&d=" + duration.toISOString();;
+  var newURL = "/?r=0&d=" + duration.toISOString();
   window.history.replaceState(null, null, newURL);
 }
 
@@ -179,6 +179,9 @@ function clear() {
   startTime = null;
   duration = moment.duration(0);
   show(duration);
+
+  var newURL = "/" ;
+  window.history.replaceState(null, null, newURL);
 }
 
 
