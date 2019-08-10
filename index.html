@@ -1,236 +1,202 @@
-
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link rel='manifest' href='/manifest.json'>
-
+    <link rel='manifest' href='/manifest.json'>
     <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
-<link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
-<link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
-<link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
-<link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
-<link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
-<link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
-<link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
-<link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-
-<meta name="msapplication-TileColor" content="#000">
-<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
-
-
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <meta name="msapplication-TileColor" content="#000">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
     <meta name="theme-color" content="#000"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-<style>
-html,body { height: 100%; margin: 0px; padding: 0px; }
+    <style>
+      html,body{
+        height: 100%; margin: 0px; padding: 0px;
+      }
 
-.main{
-position: absolute;
-top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
+      .main{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
 
-body{
-background-color: #000!important;
-position: relative;}
-
-
-
-</style>
+      body{
+        background-color: #000!important;
+        position: relative;
+      }
+    </style>
 
     <title>Minimal Timer</title>
   </head>
   <body>
-
-
-<div class="main">
-<div class="timer text-white text-center">
-<h1><time>00:00:00</time></h1>
-
-
-
-<div class="btn-group">
-<button type="button" class="btn btn-dark" id="start">start</button>
-<button type="button" class="btn btn-dark" id="stop">stop</button>
-<button type="button" class="btn btn-dark" id="clear">clear</button>
-</div>
-</div>
-</div>
-
-
-
-
-
-
-
-
-
-
+    <div class="main">
+      <div class="timer text-white text-center">
+        <h1><time>00:00:00</time></h1>
+        <div class="btn-group">
+          <button type="button" class="btn btn-dark" id="start">start</button>
+          <button type="button" class="btn btn-dark" id="stop">stop</button>
+          <button type="button" class="btn btn-dark" id="clear">clear</button>
+        </div>
+      </div>
+    </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js"></script>
-
-
     <script>
 
 
 
-    moment.locale('de');
-var h1 = document.getElementsByTagName('time')[0],
-    bt_start = document.getElementById('start'),
-    bt_stop = document.getElementById('stop'),
-    bt_clear = document.getElementById('clear'),
-    startTime = null,running=false ,duration = moment.duration(0);
+      moment.locale('de');
+      var h1 = document.getElementsByTagName('time')[0],
+      bt_start = document.getElementById('start'),
+      bt_stop = document.getElementById('stop'),
+      bt_clear = document.getElementById('clear'),
+      startTime = null,running=false ,duration = moment.duration(0);
 
-    vars = {};
-    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-        vars[key] = value;
-    });
-
-
-function init(vars) {
-
-  if (moment.isDuration(moment.duration(vars['d'])) & vars['t']==null & vars['r']=="0"){
-    running=false;
-    duration = moment.duration(vars['d']);
-    show(duration);
-    startTime = null;
-  }
-  if (vars['d']==null & moment(vars['t']).isValid() & vars['r']=="1"){
-    running=true;
-    startTime = moment(vars['t']);
-    duration = null
-    update()
-  }
-}
-
-show(duration);
-
-init(vars);
-
-
-
-
-
-function update() {
-  if (!running) {return}
-    var now = moment(new Date());
-
-  var dur = moment.duration(now.diff(startTime));
-  show(dur);
-  timer()
-}
-function timer() {
-    t = setTimeout(update, 1000);
-}
-
-function show(dur) {
-  var seconds = dur.seconds();
-  var minutes = dur.minutes();
-  var hours = Math.floor(dur.asHours());
-  h1.textContent = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" + (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
-}
-// timer();
-
-
-
-
-
-
-function start() {
-  console.log('start');
-  if (duration==null) {return}
-  running=true;
-  var now = moment(new Date());
-
-  startTime = now.subtract(moment.duration(duration));
-  duration = null
-
-  var newURL = "/?r=1&t=" + startTime.format();
-  window.history.replaceState(null, null, newURL);
-
-  update()
-}
-
-function stop() {
-  console.log('stop');
-  if (startTime==null) {return}
-  running=false;
-  var now = moment(new Date());
-  duration = moment.duration(now.diff(startTime));
-  startTime = null;
-  show(duration);
-
-  var newURL = "/?r=0&d=" + duration.toISOString();
-  window.history.replaceState(null, null, newURL);
-}
-
-function clear() {
-  console.log('clear');
-  running=false;
-  startTime = null;
-  duration = moment.duration(0);
-  show(duration);
-
-  var newURL = "/" ;
-  window.history.replaceState(null, null, newURL);
-}
-
-
-
-
-
-function debug() {
-  console.log('----------');
-  console.log(running);
-  console.log(startTime);
-  console.log(duration);
-  console.log('----------');
-}
-
-
-//start();
-
-
-/* Start button */
-bt_start.onclick = start;
-/* Stop button */
-bt_stop.onclick = stop;
-/* Clear button */
-bt_clear.onclick = clear;
-
-</script>
-
-<script>
-
-// This is the "Offline page" service worker
-
-// Add this below content to your HTML page, or add the js file to your page at the very top to register service worker
-
-// Check compatibility for the browser we're running this in
-if ("serviceWorker" in navigator) {
-  if (navigator.serviceWorker.controller) {
-    console.log("[PWA Builder] active service worker found, no need to register");
-  } else {
-    // Register the service worker
-    navigator.serviceWorker
-      .register("pwabuilder-sw.js", {
-        scope: "./"
-      })
-      .then(function (reg) {
-        console.log("[PWA Builder] Service worker has been registered for scope: " + reg.scope);
+      vars = {};
+      var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+          vars[key] = value;
       });
-  }
-}
 
-</script>
+
+      function init(vars) {
+        if (moment.isDuration(moment.duration(vars['d'])) & vars['t']==null & vars['r']=="0"){
+          running=false;
+          duration = moment.duration(vars['d']);
+          show(duration);
+          startTime = null;
+        }
+        if (vars['d']==null & moment(vars['t']).isValid() & vars['r']=="1"){
+          running=true;
+          startTime = moment(vars['t']);
+          duration = null
+          update()
+        }
+      }
+
+      show(duration);
+      init(vars);
+
+      function update() {
+        if (!running) {return}
+          var now = moment(new Date());
+
+        var dur = moment.duration(now.diff(startTime));
+        show(dur);
+        timer()
+      }
+      function timer() {
+          t = setTimeout(update, 1000);
+      }
+
+      function show(dur) {
+        var seconds = dur.seconds();
+        var minutes = dur.minutes();
+        var hours = Math.floor(dur.asHours());
+        h1.textContent = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" + (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
+      }
+      // timer();
+
+      function start() {
+        console.log('start');
+        if (duration==null) {return}
+        running=true;
+        var now = moment(new Date());
+
+        startTime = now.subtract(moment.duration(duration));
+        duration = null
+
+        var newURL = "/?r=1&t=" + startTime.format();
+        window.history.replaceState(null, null, newURL);
+
+        update()
+      }
+
+      function stop() {
+        console.log('stop');
+        if (startTime==null) {return}
+        running=false;
+        var now = moment(new Date());
+        duration = moment.duration(now.diff(startTime));
+        startTime = null;
+        show(duration);
+
+        var newURL = "/?r=0&d=" + duration.toISOString();
+        window.history.replaceState(null, null, newURL);
+      }
+
+      function clear() {
+        console.log('clear');
+        running=false;
+        startTime = null;
+        duration = moment.duration(0);
+        show(duration);
+
+        var newURL = "/" ;
+        window.history.replaceState(null, null, newURL);
+      }
+
+
+
+
+
+      function debug() {
+        console.log('----------');
+        console.log(running);
+        console.log(startTime);
+        console.log(duration);
+        console.log('----------');
+      }
+
+
+      //start();
+
+
+      /* Start button */
+      bt_start.onclick = start;
+      /* Stop button */
+      bt_stop.onclick = stop;
+      /* Clear button */
+      bt_clear.onclick = clear;
+
+    </script>
+    <script>
+
+      // This is the "Offline page" service worker
+
+      // Add this below content to your HTML page, or add the js file to your page at the very top to register service worker
+
+      // Check compatibility for the browser we're running this in
+      if ("serviceWorker" in navigator) {
+        if (navigator.serviceWorker.controller) {
+          console.log("[PWA Builder] active service worker found, no need to register");
+        } else {
+          // Register the service worker
+          navigator.serviceWorker
+            .register("pwabuilder-sw.js", {
+              scope: "./"
+            })
+            .then(function (reg) {
+              console.log("[PWA Builder] Service worker has been registered for scope: " + reg.scope);
+            });
+        }
+      }
+
+    </script>
   </body>
 </html>
