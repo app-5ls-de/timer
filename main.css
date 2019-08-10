@@ -67,6 +67,27 @@ button{
   text-shadow: none;
 }
 
+button:active{
+  z-index: 1;
+  color: #fff;
+  background-color: #1d2124;
+  border-color: #171a1d;
+}
+
+button:hover{
+  z-index: 1;
+    color: #fff;
+    background-color: #23272b;
+    border-color: #1d2124;
+    text-decoration: none;
+}
+
+button:focus{
+  z-index: 1;
+  box-shadow: 0 0 0 0.2rem rgba(82,88,93,.5);
+  outline: 0;
+}
+
 button.not-last{
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
