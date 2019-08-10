@@ -1,6 +1,3 @@
-
-
-
 moment.locale('de');
 var h1 = document.getElementsByTagName('time')[0],
 bt_start = document.getElementById('start'),
