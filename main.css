@@ -23,6 +23,11 @@ time{
   line-height: 1.2;
 }
 
+h1{
+  margin-top: 0;
+  margin-bottom: .5rem;
+}
+
 .buttons{
   position: relative;
   display: -ms-inline-flexbox;
@@ -30,23 +35,11 @@ time{
   vertical-align: middle;
 }
 
-h1{
-  margin-top: 0;
-  margin-bottom: .5rem;
-}
-
 button{
   color: #fff;
   background-color: #343a40;
   border-color: #343a40;
-  position: relative;
-  flex: 1 1 auto;
   cursor: pointer;
-  display: inline-block;
-  font-weight: 400;
-  text-align: center;
-  vertical-align: middle;
-  user-select: none;
   border: 1px solid transparent;
   padding: .375rem .75rem;
   font-size: 1rem;
@@ -55,16 +48,6 @@ button{
   transition: color .15s
   -webkit-appearance: button;
   text-transform: none;
-  overflow: visible;
-  margin: 0;
-  font-family: inherit;
-  -webkit-writing-mode: horizontal-tb !important;
-  text-rendering: auto;
-  letter-spacing: normal;
-  word-spacing: normal;
-  text-indent: 0px;
-  align-items: flex-start;
-  text-shadow: none;
 }
 
 button:active{
@@ -76,10 +59,10 @@ button:active{
 
 button:hover{
   z-index: 1;
-    color: #fff;
-    background-color: #23272b;
-    border-color: #1d2124;
-    text-decoration: none;
+  color: #fff;
+  background-color: #23272b;
+  border-color: #1d2124;
+  text-decoration: none;
 }
 
 button:focus{
