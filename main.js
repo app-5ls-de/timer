@@ -1,137 +1,125 @@
 moment.locale('de');
-var h1 = document.getElementsByTagName('time')[0],
-bt_start = document.getElementById('start'),
-bt_stop = document.getElementById('stop'),
-bt_clear = document.getElementById('clear'),
-bt_plus = document.getElementById('plus'),
-bt_minus = document.getElementById('minus'),
-startTime = null,running=false ,duration = moment.duration(0);
+var h1_time = document.getElementsByTagName('time')[0];
+var bt_start = document.getElementById('start');
+var bt_stop = document.getElementById('stop');
+var bt_clear = document.getElementById('clear');
+var bt_plus = document.getElementById('plus');
+var bt_minus = document.getElementById('minus');
 
-vars = {};
-var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-    vars[key] = value;
-});
+var state = {
+  reset: function () {
+    this.currentState = 'stopped';
+    this.duration = moment.duration(0);
+    this.startTime = null;
+    this.display();
+  },
 
+  validate: function () {
+    if (this.currentState == "started") {
+      if (this.startTime.isValid() & this.duration == null) {
+        return
+      }
+    }
+    if (this.currentState == "stopped") {
+      if (this.startTime == null & moment.isDuration(this.duration)) {
+        return
+      }
+    }
+    console.error('invalid state');
+    this.reset();
+  },
 
-function init(vars) {
-  if (moment.isDuration(moment.duration(vars['d'])) & vars['t']==null & vars['r']=="0"){
-    running=false;
-    duration = moment.duration(vars['d']);
-    if (duration<0){clear(); return}
-    show(duration);
-    startTime = null;
-  }
-  if (vars['d']==null & moment(vars['t']).isValid() & vars['r']=="1"){
-    running=true;
-    startTime = moment(vars['t']);
-    duration = null
-    update()
-  }
-  
-}
+  display: function () {
+    this.validate();
+    let duration;
+    if (this.currentState == "started") {
+      let now = moment(new Date());
+      duration = moment.duration(now.diff(this.startTime));
+    }
+    if (this.currentState == "stopped") {
+      duration = this.duration;
+    }
 
-show(duration);
-init(vars);
-
-function update() {
-  if (!running) {return}
-    var now = moment(new Date());
-
-  var dur = moment.duration(now.diff(startTime));
-  show(dur);
-  timer()
-}
-function timer() {
-    t = setTimeout(update, 1000);
-}
-
-function show(dur) {
-  if (dur<0){clear(); return}
-  var seconds = dur.seconds();
-  var minutes = dur.minutes();
-  var hours = Math.floor(dur.asHours());
-  h1.textContent = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" + (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
-}
+    // no negative for now
+    if (duration < 0) { this.reset() }
 
 
-function start() {
-  console.log('start');
-  if (duration==null) {return}
-  running=true;
-  var now = moment(new Date());
+    var s = duration.seconds();
+    var m = duration.minutes();
+    var h = Math.floor(duration.asHours());
+    h1_time.textContent = (h ? (h > 9 ? h : "0" + h) : "00") + ":" + (m ? (m > 9 ? m : "0" + m) : "00") + ":" + (s > 9 ? s : "0" + s);
+  },
 
-  startTime = now.subtract(moment.duration(duration));
-  duration = null
-
-  var newURL = "/?r=1&t=" + startTime.format();
-  window.history.replaceState(null, null, newURL);
-
-  update()
-}
-
-function stop() {
-  console.log('stop');
-  if (startTime==null) {return}
-  running=false;
-  var now = moment(new Date());
-  duration = moment.duration(now.diff(startTime));
-  startTime = null;
-  show(duration);
-
-  var newURL = "/?r=0&d=" + duration.toISOString();
-  window.history.replaceState(null, null, newURL);
-}
-
-function clear() {
-  console.log('clear');
-  running=false;
-  startTime = null;
-  duration = moment.duration(0);
-  show(duration);
-
-  var newURL = "/" ;
-  window.history.replaceState(null, null, newURL);
-}
-
-function addseconds(seconds) {
-  var seconds_duration = moment.duration(seconds, 'seconds')
-  if (!moment.isDuration(seconds_duration)) {return}
-
-  if (startTime!=null) {
-    startTime.subtract(seconds_duration)
-    var newURL = "/?r=1&t=" + startTime.format();
+  updateURL: function () {
+    let newURL = '/';
+    if (this.currentState == "started") {
+      newURL = newURL + "?startTime=" + this.startTime.format() + '&currentState=started';
+    }
+    if (this.currentState == "stopped") {
+      newURL = newURL + "?duration=" + this.duration.toISOString() + '&currentState=stopped';
+    }
     window.history.replaceState(null, null, newURL);
-    update()
-    return
+  },
+
+  stop: function () {
+    this.validate();
+    if (this.currentState == 'started') {
+      let now = moment(new Date());
+      this.duration = moment.duration(now.diff(this.startTime));
+      this.startTime = null;
+      this.currentState = 'stopped';
+      this.updateURL();
+      this.display();
+    }
+  },
+
+  start: function () {
+    this.validate();
+    if (this.currentState == 'stopped') {
+      let now = moment(new Date());
+      this.startTime = now.subtract(this.duration);
+      this.duration = null;
+      this.currentState = 'started';
+      this.updateURL();
+      this.display();
+    }
+  },
+
+  add: function (number, unit) {
+    unit = unit || '';
+    console.log('function: add');
+    this.validate();
+    var durationToAdd = moment.duration(number, unit);
+
+    if (!moment.isDuration(durationToAdd)) {
+      console.error('invalid duration to add');
+      return
+    }
+
+    if (this.currentState == 'started') {
+      this.startTime.subtract(durationToAdd);
+    }
+
+    if (this.currentState == 'stopped') {
+      this.duration.add(durationToAdd);
+    }
+    this.updateURL();
+    this.display();
   }
-
-  if (duration!=null) {
-    duration.add(seconds_duration)
-    if (duration<0){clear(); return}
-    var newURL = "/?r=0&d=" + duration.toISOString();
-    window.history.replaceState(null, null, newURL);
-    show(duration)
-  }
-}
+};
 
 
+state.reset();
+
+bt_start.onclick = function () { state.start() };
+bt_stop.onclick = function () { state.stop() };
+bt_clear.onclick = function () { state.reset() };
+bt_plus.onclick = function () { state.add(1, 'minutes') };
+bt_minus.onclick = function () { state.add(-1, 'minutes') };
 
 
 
-function debug() {
-  console.log('----------');
-  console.log(running);
-  console.log(startTime);
-  console.log(duration);
-  console.log('----------');
-}
 
 
-//start();
-
-
-bt_start.onclick = start;
-bt_stop.onclick = stop;
-bt_clear.onclick = clear;
-bt_plus.onclick = function () {addseconds(60)};
-bt_minus.onclick = function () {addseconds(-60)};
+window.setInterval(state.display, 1000);
+//clearInterval();
