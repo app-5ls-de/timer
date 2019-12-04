@@ -1,44 +1,42 @@
 {"dir" : "ltr",
     "lang" : "en",
-    "name" : "Minimal Timer",
+    "name" : "Timer",
     "scope" : "/",
     "display" : "fullscreen",
-    "start_url" : "/?pwa=1",
+    "start_url" : "/",
     "short_name" : "Timer",
     "description" : "Simple and mininal Timer",
     "orientation" : "portrait-primary",
     "background_color" : "#000",
     "theme_color" : "#000",
-    "related_applications" : "",
-    "prefer_related_applications" : "false",
     "generated" : "true",
     "icons" : [
         {
-            "src": "/ico/logo16px.png",
+            "src": "/images/logo16px.png",
             "sizes": "16x16"
         },
         {
-            "src": "/ico/logo24px.png",
+            "src": "/images/logo24px.png",
             "sizes": "24x24"
         },
         {
-            "src": "/ico/logo32px.png",
+            "src": "/images/logo32px.png",
             "sizes": "32x32"
         },
         {
-            "src": "/ico/logo64px.png",
+            "src": "/images/logo64px.png",
             "sizes": "64x64"
         },
         {
-            "src": "/ico/logo128px.png",
+            "src": "/images/logo128px.png",
             "sizes": "128x128"
         },
         {
-            "src": "/ico/logo256px.png",
+            "src": "/images/logo256px.png",
             "sizes": "256x256"
         },
         {
-            "src": "/ico/logo512px.png",
+            "src": "/images/logo512px.png",
             "sizes": "512x512"
         }
     ]}
