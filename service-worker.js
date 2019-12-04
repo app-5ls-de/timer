@@ -4,6 +4,7 @@ const precacheFiles = [
   '/index.html',
   '/manifest.json',
   '/favicon.ico',
+  '/moment.min.js',
   '/images/logo16px.png',
   '/images/logo24px.png',
   '/images/logo32px.png',
@@ -49,7 +50,7 @@ self.addEventListener("activate", function (event) {
 });
 
 // If any fetch fails, it will look for the request in the cache and serve it from there first
-self.addEventListener("fetch", function (event) { 
+self.addEventListener("fetch", function (event) {
   if (event.request.method !== "GET") return;
 
   event.respondWith(
