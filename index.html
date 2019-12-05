@@ -147,10 +147,10 @@
     var bt_plus = document.getElementById('plus');
     var bt_minus = document.getElementById('minus');
     var storage = 'state';
-    var debug = true;
+    var debug = false;
 
 
-    function newstate(status) {
+    function newstate(status) {//to check/
       if (debug) console.log('function: newstate, ', status);
       status = status || 'stopped';
 
@@ -178,32 +178,37 @@
       return newobj
     }
 
-    function log(obj) {
+    function stringify(obj) {
       let result = {};
-      if (obj == null || obj.currentstate == null) return obj;
+      if (obj == null || obj.currentstate == null) return '{}';
       result.currentstate = obj.currentstate;
 
       if (obj.startTime == null) {
-        result.startTime = obj.startTime;
+        result.startTime = 'null';
       } else if (obj.startTime.isValid()) {
         result.startTime = obj.startTime.format();
       } else {
-        return obj;
+        return '{}';
       }
 
       if (obj.duration == null) {
-        result.duration = obj.duration;
+        result.duration = 'null';
       } else if (moment.isDuration(obj.duration)) {
         result.duration = obj.duration.toISOString();
       } else {
-        return obj;
+        return '{}';
       }
-
-      return result
+      return JSON.stringify(result)
     }
 
-    function isvalid(obj) {
-      if (debug) console.log('function: isvalid, ', log(obj));
+    /* function stringify(obj) {//to check/
+      let result = stringify(obj));
+      result.state = obj;
+      return result
+    } */
+
+    function isvalid(obj) {//to check/
+      if (debug) console.log('function: isvalid, ', stringify(obj));
       if (obj == null || obj.currentstate == null) return false;
       switch (obj.currentstate) {
         case 'started':
@@ -231,57 +236,13 @@
       return false
     }
 
-    function save(obj) {
-      if (debug) console.log('function: save, ', log(obj));
-      window.localStorage.setItem(storage, JSON.stringify(state));
+    function save(obj) {//to check/
+      if (debug) console.log('function: save, ', stringify(obj));
+      window.localStorage.setItem(storage, stringify(obj));
     }
 
-    function stop(obj) {
-      if (debug) console.log('function: stop, ', log(obj));
-      let newobj;
-      switch (obj.currentstate) {
-        case 'started':
-          newobj = newstate();
-          newobj.duration = moment.duration(moment().diff(obj.startTime));
-          newobj.startTime = null;
-          newobj.currentstate = 'stopped';
-          bt_toggle.innerText = 'start';
-          save(newobj);
-          break;
-        case 'stopped':
-          return obj;
-          break;
-        default:
-          console.error('Invalid state');
-          newobj = newstate();
-      }
-      return newobj
-    }
-
-    function start(obj) {
-      if (debug) console.log('function: start, ', log(obj));
-      let newobj;
-      switch (obj.currentstate) {
-        case 'started':
-          return obj;
-          break;
-        case 'stopped':
-          newobj = newstate();
-          newobj.startTime = moment().subtract(obj.duration);
-          newobj.duration = null;
-          newobj.currentstate = 'started';
-          bt_toggle.innerText = 'stop';
-          save(newobj);
-          break;
-        default:
-          console.error('Invalid state');
-          newobj = newstate();
-      }
-      return newobj
-    }
-
-    function add(obj, number, unit) {
-      if (debug) console.log('function: add, ', log(obj));
+    function add(obj, number, unit) {//to check/
+      if (debug) console.log('function: add, ', stringify(obj));
       unit = unit || '';
       let durationToAdd = moment.duration(number, unit);
       if (!moment.isDuration(durationToAdd)) {
@@ -316,38 +277,33 @@
       return newobj
     }
 
-    function display(obj) {
-      if (debug) console.log('function: display, ', log(obj));
+    function display(obj) {//to check/
+      if (debug) console.log('function: display, ', stringify(obj));
       obj = obj || state;
 
-      function format(obj) {
-        if (debug) console.log('function: format, ', log(obj));
-        let duration;
+      let duration;
 
-        switch (obj.currentstate) {
-          case 'started':
-            duration = moment.duration(moment().diff(obj.startTime));
-            break;
-          case 'stopped':
-            duration = obj.duration;
-            break;
-          default:
-            console.error('Invalid state');
-            return '00:00:00'
-        }
-
-        function pretty(num) {
-          return (num ? (num > 9 ? num : "0" + num) : "00");
-        }
-
-        return pretty(Math.floor(duration.asHours())) + ":" + pretty(duration.minutes()) + ":" + pretty(duration.seconds());
+      switch (obj.currentstate) {
+        case 'started':
+          duration = moment.duration(moment().diff(obj.startTime));
+          break;
+        case 'stopped':
+          duration = obj.duration;
+          break;
+        default:
+          console.error('Invalid state');
+          duration = moment.duration(0);
       }
 
-      h1_time.textContent = format(obj);
+      function pretty(num) {
+        return (num ? (num > 9 ? num : "0" + num) : "00");
+      }
+
+      h1_time.textContent = pretty(Math.floor(duration.asHours())) + ":" + pretty(duration.minutes()) + ":" + pretty(duration.seconds());
     }
-   
-    function clear(obj) {
-      if (debug) console.log('function: clear, ', log(obj));
+
+    function clear(obj) {//to check/
+      if (debug) console.log('function: clear, ', stringify(obj));
       let newobj;
       switch (obj.currentstate) {
         case 'started':
@@ -369,8 +325,57 @@
       return newobj
     }
 
-    function toggle(obj) {
-      if (debug) console.log('function: toggl, ', log(obj));
+    function toggle(obj) {//to check/
+      if (debug) console.log('function: toggl, ', stringify(obj));
+      
+      
+      
+      function stop(obj) {
+      if (debug) console.log('function: stop, ', stringify(obj));
+      let newobj;
+      switch (obj.currentstate) {
+        case 'started':
+          newobj = newstate();
+          newobj.duration = moment.duration(moment().diff(obj.startTime));
+          newobj.startTime = null;
+          newobj.currentstate = 'stopped';
+          bt_toggle.innerText = 'start';
+          save(newobj);
+          break;
+        case 'stopped':
+          return obj;
+          break;
+        default:
+          console.error('Invalid state');
+          newobj = newstate();
+      }
+      return newobj
+    }
+
+    function start(obj) {
+      if (debug) console.log('function: start, ', stringify(obj));
+      let newobj;
+      switch (obj.currentstate) {
+        case 'started':
+          return obj;
+          break;
+        case 'stopped':
+          newobj = newstate();
+          newobj.startTime = moment().subtract(obj.duration);
+          newobj.duration = null;
+          newobj.currentstate = 'started';
+          bt_toggle.innerText = 'stop';
+          save(newobj);
+          break;
+        default:
+          console.error('Invalid state');
+          newobj = newstate();
+      }
+      return newobj
+    }
+      
+      
+      
       let newobj;
       switch (obj.currentstate) {
         case 'started':
@@ -392,26 +397,31 @@
       return newobj
     }
 
-    function init() {
+    function init() {//to check/
       let json = JSON.parse(window.localStorage.getItem(storage));
       if (debug) console.log('function: init, ', json);
       let newobj = {};
 
-      if (json == null || json.currentstate == null) { window.localStorage.clear(); return newstate('stopped'); }
-      newobj.currentstate = json.currentstate;
-
-      switch (newobj.currentstate) {
+      if (json == null || json.currentstate == null) { 
+        window.localStorage.clear(); 
+        return newstate('stopped'); 
+      }
+    
+      switch (json.currentstate) {
         case 'started':
+          newobj.currentstate = json.currentstate;
           newobj.startTime = moment(json.startTime);
           newobj.duration = null;
           break;
         case 'stopped':
+          newobj.currentstate = json.currentstate;
           newobj.startTime = null;
           newobj.duration = moment.duration(json.duration);
           break;
         default:
           console.error('Invalid state');
-          return false
+          window.localStorage.clear(); 
+          return newstate('stopped');
       }
 
       if (isvalid(newobj)) {
@@ -429,9 +439,10 @@
             break;
         }
         return newobj
+      } else {
+        window.localStorage.clear();
+        return newstate('stopped')
       }
-      window.localStorage.clear();
-      return newstate('stopped')
     }
 
 
