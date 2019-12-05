@@ -1,66 +1,478 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel='manifest' href='/manifest.json'>
-    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <meta name="msapplication-TileColor" content="#000">
-    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
-    <meta name="theme-color" content="#000"/>
-    <meta name="Description" content="This is a really simple to use timer.">
-    <link rel="stylesheet" href="main.css">
-    <title>Minimal Timer</title>
-  </head>
-  <body>
-    <div class="main">
-      <div class="timer">
-        <h1><time>00:00:00</time></h1>
-        <div class="buttons">
-          <button class="left" id="minus">-1</button>
-          <button class="not-last" id="start">start</button>
-          <button class="not-last not-first" id="stop">stop</button>
-          <button class="not-first" id="clear">clear</button>
-          <button class="right" id="plus">+1</button>
-        </div>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel='manifest' href='/manifest.json'>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Timer">
+  <link rel="apple-touch-icon" href="/images/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="/images/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/images/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/images/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/images/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/images/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/images/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/images/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/images/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <meta name="msapplication-TileColor" content="#000">
+  <meta name="msapplication-TileImage" content="/images/ms-icon-144x144.png">
+  <meta name="theme-color" content="#000" />
+  <meta name="Description" content="Simple and mininal Timer">
+  <title>Timer</title>
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0px;
+      padding: 0px;
+    }
+
+    .main {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    body {
+      background-color: #000;
+      position: relative;
+      color: #fff;
+      text-align: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+
+    time {
+      font-size: 2.5rem;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: .5rem;
+    }
+
+    .buttons {
+      position: relative;
+      display: -ms-inline-flexbox;
+      display: inline-flex;
+      vertical-align: middle;
+    }
+
+    button {
+      color: #fff;
+      background-color: #343a40;
+      border-color: #343a40;
+      cursor: pointer;
+      border: 1px solid transparent;
+      padding: .375rem .75rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      border-radius: .25rem;
+      transition: color .15s;
+      -webkit-appearance: button;
+      text-transform: none;
+    }
+
+    button:active {
+      z-index: 1;
+      color: #fff;
+      background-color: #1d2124;
+      border-color: #171a1d;
+    }
+
+    button:hover {
+      z-index: 1;
+      color: #fff;
+      background-color: #23272b;
+      border-color: #1d2124;
+      text-decoration: none;
+    }
+
+    button:focus {
+      z-index: 1;
+      box-shadow: 0 0 0 0.2rem rgba(82, 88, 93, .5);
+      outline: 0;
+    }
+
+    button.not-last {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    button.not-first {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      margin-left: -1px;
+    }
+
+    button.right {
+      margin-left: 0.5rem;
+    }
+
+    button.left {
+      margin-right: 0.5rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="main">
+    <div class="timer">
+      <h1><time>00:00:00</time></h1>
+      <div class="buttons">
+        <button class="left" id="minus">-1</button>
+        <button class="not-last" id="toggle">start</button>
+        <button class="not-first" id="clear">clear</button>
+        <button class="right" id="plus">+1</button>
       </div>
     </div>
-    <script src="moment.min.js"></script>
-    <script src="main.js"></script>
-    <script>
+  </div>
 
-      // This is the "Offline page" service worker
+  <script src="/moment.min.js"></script>
+  <script>
+    moment.locale('de');
+    var h1_time = document.getElementsByTagName('time')[0];
+    var bt_toggle = document.getElementById('toggle');
+    var bt_clear = document.getElementById('clear');
+    var bt_plus = document.getElementById('plus');
+    var bt_minus = document.getElementById('minus');
+    var storage = 'state';
+    var debug = false;
 
-      // Add this below content to your HTML page, or add the js file to your page at the very top to register service worker
 
-      // Check compatibility for the browser we're running this in
-      if ("serviceWorker" in navigator) {
-        if (navigator.serviceWorker.controller) {
-          console.log("[PWA Builder] active service worker found, no need to register");
-        } else {
-          // Register the service worker
-          navigator.serviceWorker
-            .register("pwabuilder-sw.js", {
-              scope: "./"
-            })
-            .then(function (reg) {
-              console.log("[PWA Builder] Service worker has been registered for scope: " + reg.scope);
-            });
-        }
+    function newstate(status) {//to check/
+      if (debug) console.log('function: newstate, ', status);
+      status = status || 'stopped';
+
+      let newobj;
+      switch (status) {
+        case 'started':
+          newobj = {
+            currentstate: 'started',
+            duration: null,
+            startTime: moment()
+          }
+          break;
+        case 'stopped':
+          newobj = {
+            currentstate: 'stopped',
+            duration: moment.duration(0),
+            startTime: null
+          }
+          break;
+        default:
+          console.error('Invalid input');
+          return newstate()
       }
 
-    </script>
-  </body>
+      return newobj
+    }
+
+    function stringify(obj) {
+      let result = {};
+      if (obj == null || obj.currentstate == null) return '{}';
+      result.currentstate = obj.currentstate;
+
+      if (obj.startTime == null) {
+        result.startTime = 'null';
+      } else if (obj.startTime.isValid()) {
+        result.startTime = obj.startTime.format();
+      } else {
+        return '{}';
+      }
+
+      if (obj.duration == null) {
+        result.duration = 'null';
+      } else if (moment.isDuration(obj.duration)) {
+        result.duration = obj.duration.toISOString();
+      } else {
+        return '{}';
+      }
+      return JSON.stringify(result)
+    }
+
+    /* function stringify(obj) {//to check/
+      let result = stringify(obj));
+      result.state = obj;
+      return result
+    } */
+
+    function isvalid(obj) {//to check/
+      if (debug) console.log('function: isvalid, ', stringify(obj));
+      if (obj == null || obj.currentstate == null) return false;
+      switch (obj.currentstate) {
+        case 'started':
+          if (obj.startTime.isValid() & obj.duration == null) {
+            if (obj.startTime > moment()) { // no negative for now
+              console.error('negative startTime');
+              return false
+            }
+            return true
+          }
+          break;
+        case 'stopped':
+          if (obj.startTime == null & moment.isDuration(obj.duration)) {
+            if (obj.duration < 0) { // no negative for now
+              console.error('negative duration');
+              return false
+            }
+            return true
+          }
+          break;
+        default:
+          console.error('Invalid state');
+          return false
+      }
+      return false
+    }
+
+    function save(obj) {//to check/
+      if (debug) console.log('function: save, ', stringify(obj));
+      window.localStorage.setItem(storage, stringify(obj));
+    }
+
+    function add(obj, number, unit) {//to check/
+      if (debug) console.log('function: add, ', stringify(obj));
+      unit = unit || '';
+      let durationToAdd = moment.duration(number, unit);
+      if (!moment.isDuration(durationToAdd)) {
+        console.error('invalid duration to add');
+        newobj = newstate();
+        save(newobj);
+        display(newobj);
+        return newobj
+      }
+
+      let newobj;
+      switch (obj.currentstate) {
+        case 'started':
+          newobj = newstate('started');
+          newobj.startTime = obj.startTime.subtract(durationToAdd);
+          break;
+        case 'stopped':
+          newobj = newstate('stopped');
+          newobj.duration = obj.duration.add(durationToAdd);
+          break;
+        default:
+          console.error('Invalid state');
+          newobj = newstate();
+      }
+
+      if (!isvalid(newobj)) {
+        console.error('Invalid state');
+        newobj = newstate(obj.currentstate);
+      }
+      save(newobj);
+      display(newobj);
+      return newobj
+    }
+
+    function display(obj) {//to check/
+      if (debug) console.log('function: display, ', stringify(obj));
+      obj = obj || state;
+
+      let duration;
+
+      switch (obj.currentstate) {
+        case 'started':
+          duration = moment.duration(moment().diff(obj.startTime));
+          break;
+        case 'stopped':
+          duration = obj.duration;
+          break;
+        default:
+          console.error('Invalid state');
+          duration = moment.duration(0);
+      }
+
+      function pretty(num) {
+        return (num ? (num > 9 ? num : "0" + num) : "00");
+      }
+
+      h1_time.textContent = pretty(Math.floor(duration.asHours())) + ":" + pretty(duration.minutes()) + ":" + pretty(duration.seconds());
+    }
+
+    function clear(obj) {//to check/
+      if (debug) console.log('function: clear, ', stringify(obj));
+      let newobj;
+      switch (obj.currentstate) {
+        case 'started':
+          newobj = newstate('stopped');
+          clearInterval(timer);
+          if (debug) console.log('Interval clear');
+          save(newobj);
+          break;
+        case 'stopped':
+          newobj = newstate('stopped');
+          save(newobj);
+          break;
+        default:
+          console.error('Invalid state');
+          newobj = newstate();
+          save(newobj);
+      }
+      display(newobj);
+      return newobj
+    }
+
+    function toggle(obj) {//to check/
+      if (debug) console.log('function: toggl, ', stringify(obj));
+      
+      
+      
+      function stop(obj) {
+      if (debug) console.log('function: stop, ', stringify(obj));
+      let newobj;
+      switch (obj.currentstate) {
+        case 'started':
+          newobj = newstate();
+          newobj.duration = moment.duration(moment().diff(obj.startTime));
+          newobj.startTime = null;
+          newobj.currentstate = 'stopped';
+          bt_toggle.innerText = 'start';
+          save(newobj);
+          break;
+        case 'stopped':
+          return obj;
+          break;
+        default:
+          console.error('Invalid state');
+          newobj = newstate();
+      }
+      return newobj
+    }
+
+    function start(obj) {
+      if (debug) console.log('function: start, ', stringify(obj));
+      let newobj;
+      switch (obj.currentstate) {
+        case 'started':
+          return obj;
+          break;
+        case 'stopped':
+          newobj = newstate();
+          newobj.startTime = moment().subtract(obj.duration);
+          newobj.duration = null;
+          newobj.currentstate = 'started';
+          bt_toggle.innerText = 'stop';
+          save(newobj);
+          break;
+        default:
+          console.error('Invalid state');
+          newobj = newstate();
+      }
+      return newobj
+    }
+      
+      
+      
+      let newobj;
+      switch (obj.currentstate) {
+        case 'started':
+          newobj = stop(obj);
+          clearInterval(timer);
+          display(newobj);
+          if (debug) console.log('Interval clear');
+          break;
+        case 'stopped':
+          newobj = start(obj);
+          timer = window.setInterval(display, 1000);
+          if (debug) console.log('Interval set');
+          display(newobj);
+          break;
+        default:
+          console.error('Invalid state');
+          newobj = newstate();
+      }
+      return newobj
+    }
+
+    function init() {//to check/
+      let json = JSON.parse(window.localStorage.getItem(storage));
+      if (debug) console.log('function: init, ', json);
+      let newobj = {};
+
+      if (json == null || json.currentstate == null) { 
+        window.localStorage.clear(); 
+        return newstate('stopped'); 
+      }
+    
+      switch (json.currentstate) {
+        case 'started':
+          newobj.currentstate = json.currentstate;
+          newobj.startTime = moment(json.startTime);
+          newobj.duration = null;
+          break;
+        case 'stopped':
+          newobj.currentstate = json.currentstate;
+          newobj.startTime = null;
+          newobj.duration = moment.duration(json.duration);
+          break;
+        default:
+          console.error('Invalid state');
+          window.localStorage.clear(); 
+          return newstate('stopped');
+      }
+
+      if (isvalid(newobj)) {
+        display(newobj);
+        switch (newobj.currentstate) {
+          case 'started':
+            timer = window.setInterval(display, 1000);
+            if (debug) console.log('Interval set');
+            bt_toggle.innerText = 'stop';
+            break;
+          case 'stopped':
+            clearInterval(timer);
+            if (debug) console.log('Interval clear');
+            bt_toggle.innerText = 'start';
+            break;
+        }
+        return newobj
+      } else {
+        window.localStorage.clear();
+        return newstate('stopped')
+      }
+    }
+
+
+    var state = init();
+    var timer;
+
+
+    bt_toggle.onclick = function () { state = toggle(state); };
+    bt_clear.onclick = function () { state = clear(state); };
+    bt_plus.onclick = function () { state = add(state, 1, 'minutes') };
+    bt_minus.onclick = function () { state = add(state, -1, 'minutes') };
+
+
+  </script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      if (navigator.serviceWorker.controller) {
+        console.log("[ServiceWorker] active service worker found");
+      } else {
+        // Register the service worker
+        navigator.serviceWorker
+          .register("/service-worker.js", {
+            scope: "/"
+          })
+          .then(function (reg) {
+            console.log('[ServiceWorker] Service worker registered.', reg);
+          });
+      }
+    }
+  </script>
+</body>
+
 </html>
