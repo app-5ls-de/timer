@@ -310,6 +310,7 @@
           newobj = newstate('stopped');
           clearInterval(timer);
           if (debug) console.log('Interval clear');
+          bt_toggle.innerText = 'start';
           save(newobj);
           break;
         case 'stopped':
