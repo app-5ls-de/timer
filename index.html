@@ -19,13 +19,13 @@
   <link rel="apple-touch-icon" sizes="152x152" href="/images/apple-icon-152x152.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-icon-180x180.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/images/android-icon-192x192.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
   <meta name="msapplication-TileColor" content="#000">
   <meta name="msapplication-TileImage" content="/images/ms-icon-144x144.png">
   <meta name="theme-color" content="#000" />
-  <meta name="Description" content="Simple and mininal Timer">
+  <meta name="Description" content="Simple and minimal Timer">
   <title>Timer</title>
   <style>
     html,
@@ -201,12 +201,6 @@
       return JSON.stringify(result)
     }
 
-    /* function stringify(obj) {//to check/
-      let result = stringify(obj));
-      result.state = obj;
-      return result
-    } */
-
     function isvalid(obj) {//to check/
       if (debug) console.log('function: isvalid, ', stringify(obj));
       if (obj == null || obj.currentstate == null) return false;
@@ -242,7 +236,7 @@
     }
 
     function add(obj, number, unit) {//to check/
-      if (debug) console.log('function: add, ', stringify(obj));
+      if (debug) console.log('function: add, ', stringify(obj),number,unit);
       unit = unit || '';
       let durationToAdd = moment.duration(number, unit);
       if (!moment.isDuration(durationToAdd)) {
@@ -407,7 +401,7 @@
         window.localStorage.clear(); 
         return newstate('stopped'); 
       }
-    
+
       switch (json.currentstate) {
         case 'started':
           newobj.currentstate = json.currentstate;
@@ -421,7 +415,7 @@
           break;
         default:
           console.error('Invalid state');
-          window.localStorage.clear(); 
+          window.localStorage.clear();
           return newstate('stopped');
       }
 
