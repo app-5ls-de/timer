@@ -236,7 +236,7 @@
     }
 
     function add(obj, number, unit) {//to check/
-      if (debug) console.log('function: add, ', stringify(obj),number,unit);
+      if (debug) console.log('function: add, ', stringify(obj), number, unit);
       unit = unit || '';
       let durationToAdd = moment.duration(number, unit);
       if (!moment.isDuration(durationToAdd)) {
@@ -294,6 +294,15 @@
       }
 
       h1_time.textContent = pretty(Math.floor(duration.asHours())) + ":" + pretty(duration.minutes()) + ":" + pretty(duration.seconds());
+    }
+
+    function iszero(obj) {
+      if (debug) console.log('function: iszero, ', stringify(obj));
+
+      if (obj.currentstate == 'stopped' && obj.duration.asMilliseconds() == 0) {
+        return true
+      }
+      return false
     }
 
     function clear(obj) {//to check/
