@@ -1,4 +1,4 @@
-const CACHE = "static-cache-v1.5";
+const CACHE = "static-cache-v1.6";
 const precacheFiles = [
   '/',
   '/index.html',
