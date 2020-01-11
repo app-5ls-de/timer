@@ -238,6 +238,10 @@
     function add(obj, number, unit) {//to check/
       if (debug) console.log('function: add, ', stringify(obj), number, unit);
       unit = unit || '';
+
+      bt_clear.innerHTML = 'clear';
+      oldstate = undefined;
+
       let durationToAdd = moment.duration(number, unit);
       if (!moment.isDuration(durationToAdd)) {
         console.error('invalid duration to add');
@@ -308,6 +312,35 @@
     function clear(obj) {//to check/
       if (debug) console.log('function: clear, ', stringify(obj));
       let newobj;
+
+      if (bt_clear.innerHTML == 'back') {
+        bt_clear.innerHTML = 'clear';
+        if (isvalid(oldstate)) {
+          newobj = oldstate;
+          oldstate = undefined;
+          switch (newobj.currentstate) {
+            case 'started':
+              timer = window.setInterval(display, 1000);
+              if (debug) console.log('Interval set');
+              bt_toggle.innerText = 'stop';
+              break;
+            case 'stopped':
+              bt_toggle.innerText = 'start';
+              break;
+          }
+
+          save(newobj);
+          display(newobj);
+          return newobj
+        }
+        oldstate = undefined;
+      }
+      
+      if (!iszero(obj)) {
+        oldstate = obj;
+        bt_clear.innerHTML = 'back';
+      }
+
       switch (obj.currentstate) {
         case 'started':
           newobj = newstate('stopped');
@@ -330,7 +363,8 @@
     function toggle(obj) {//to check/
       if (debug) console.log('function: toggl, ', stringify(obj));
       
-      
+      bt_clear.innerHTML = 'clear';
+      oldstate = undefined;
       
       function stop(obj) {
       if (debug) console.log('function: stop, ', stringify(obj));
@@ -449,6 +483,7 @@
 
 
     var state = init();
+    var oldstate;
     var timer;
 
 
