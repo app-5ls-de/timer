@@ -19,13 +19,13 @@
   <link rel="apple-touch-icon" sizes="152x152" href="/images/apple-icon-152x152.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-icon-180x180.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/images/android-icon-192x192.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
   <meta name="msapplication-TileColor" content="#000">
   <meta name="msapplication-TileImage" content="/images/ms-icon-144x144.png">
   <meta name="theme-color" content="#000" />
-  <meta name="Description" content="Simple and mininal Timer">
+  <meta name="Description" content="Simple and minimal Timer">
   <title>Timer</title>
   <style>
     html,
@@ -201,12 +201,6 @@
       return JSON.stringify(result)
     }
 
-    /* function stringify(obj) {//to check/
-      let result = stringify(obj));
-      result.state = obj;
-      return result
-    } */
-
     function isvalid(obj) {//to check/
       if (debug) console.log('function: isvalid, ', stringify(obj));
       if (obj == null || obj.currentstate == null) return false;
@@ -242,8 +236,12 @@
     }
 
     function add(obj, number, unit) {//to check/
-      if (debug) console.log('function: add, ', stringify(obj));
+      if (debug) console.log('function: add, ', stringify(obj), number, unit);
       unit = unit || '';
+
+      bt_clear.innerHTML = 'clear';
+      oldstate = undefined;
+
       let durationToAdd = moment.duration(number, unit);
       if (!moment.isDuration(durationToAdd)) {
         console.error('invalid duration to add');
@@ -302,26 +300,62 @@
       h1_time.textContent = pretty(Math.floor(duration.asHours())) + ":" + pretty(duration.minutes()) + ":" + pretty(duration.seconds());
     }
 
+    function iszero(obj) {
+      if (debug) console.log('function: iszero, ', stringify(obj));
+
+      if (obj.currentstate == 'stopped' && obj.duration.asMilliseconds() == 0) {
+        return true
+      }
+      return false
+    }
+
     function clear(obj) {//to check/
       if (debug) console.log('function: clear, ', stringify(obj));
       let newobj;
+
+      if (bt_clear.innerHTML == 'back') {
+        bt_clear.innerHTML = 'clear';
+        if (isvalid(oldstate)) {
+          newobj = oldstate;
+          oldstate = undefined;
+          switch (newobj.currentstate) {
+            case 'started':
+              timer = window.setInterval(display, 1000);
+              if (debug) console.log('Interval set');
+              bt_toggle.innerText = 'stop';
+              break;
+            case 'stopped':
+              bt_toggle.innerText = 'start';
+              break;
+          }
+
+          save(newobj);
+          display(newobj);
+          return newobj
+        }
+        oldstate = undefined;
+      }
+      
+      if (!iszero(obj)) {
+        oldstate = obj;
+        bt_clear.innerHTML = 'back';
+      }
+
       switch (obj.currentstate) {
         case 'started':
           newobj = newstate('stopped');
           clearInterval(timer);
           if (debug) console.log('Interval clear');
           bt_toggle.innerText = 'start';
-          save(newobj);
           break;
         case 'stopped':
           newobj = newstate('stopped');
-          save(newobj);
           break;
         default:
           console.error('Invalid state');
           newobj = newstate();
-          save(newobj);
       }
+          save(newobj);
       display(newobj);
       return newobj
     }
@@ -329,7 +363,8 @@
     function toggle(obj) {//to check/
       if (debug) console.log('function: toggl, ', stringify(obj));
       
-      
+      bt_clear.innerHTML = 'clear';
+      oldstate = undefined;
       
       function stop(obj) {
       if (debug) console.log('function: stop, ', stringify(obj));
@@ -407,7 +442,7 @@
         window.localStorage.clear(); 
         return newstate('stopped'); 
       }
-    
+
       switch (json.currentstate) {
         case 'started':
           newobj.currentstate = json.currentstate;
@@ -421,7 +456,7 @@
           break;
         default:
           console.error('Invalid state');
-          window.localStorage.clear(); 
+          window.localStorage.clear();
           return newstate('stopped');
       }
 
@@ -448,6 +483,7 @@
 
 
     var state = init();
+    var oldstate;
     var timer;
 
 
