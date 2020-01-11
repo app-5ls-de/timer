@@ -314,17 +314,15 @@
           clearInterval(timer);
           if (debug) console.log('Interval clear');
           bt_toggle.innerText = 'start';
-          save(newobj);
           break;
         case 'stopped':
           newobj = newstate('stopped');
-          save(newobj);
           break;
         default:
           console.error('Invalid state');
           newobj = newstate();
-          save(newobj);
       }
+          save(newobj);
       display(newobj);
       return newobj
     }
