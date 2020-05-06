@@ -1,6 +1,7 @@
 const CACHE = "static-cache-v1.7";
 const precacheFiles = [
   '/',
+  'main.js',
   '/index.html',
   '/manifest.json',
   '/favicon.ico',
