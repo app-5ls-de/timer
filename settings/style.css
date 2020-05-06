@@ -1,0 +1,92 @@
+body, html {
+  height: 100%;
+  display: grid;
+}
+
+.center {
+  margin: auto;
+}
+
+.input{
+  margin-left: 4rem;
+}
+.input > input[type="number"]  {
+  width: 4rem;
+}
+
+.switch {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 1rem;
+}
+
+.switch > div{
+  position: relative;
+  width: 55px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  margin: 10px;
+}
+
+.switch > div > input[type="checkbox"] {
+  display: none;
+}
+
+.switch > div > label {
+  display: block;
+  overflow: hidden;
+  cursor: pointer;
+  height: 20px;
+  padding: 0;
+  line-height: 20px;
+  border: 0px solid #FFFFFF;
+  border-radius: 30px;
+  background-color: #9E9E9E;
+}
+
+.switch > div > label:before {
+  content: "";
+  display: block;
+  width: 30px;
+  margin: -5px;
+  background: #FFFFFF;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 31px;
+  border-radius: 30px;
+  box-shadow: 0 6px 12px 0px #757575;
+}
+
+.switch > div > input[type="checkbox"]:checked + label {
+  background-color: #42A5F5;
+}
+
+.switch > div > input[type="checkbox"]:checked + label, .switch > div > input[type="checkbox"]:checked + label:before {
+  border-color: #42A5F5;
+}
+
+.switch > div > input[type="checkbox"]:checked {
+  margin-left: 0;
+}
+
+.switch > div > input[type="checkbox"]:checked + label:before {
+  right: 0px;
+  background-color: #2196F3;
+  box-shadow: 3px 6px 18px 0px rgba(0, 0, 0, 0.2);
+}
+
+
+.switch > div > input:disabled + label {
+  background-color: black;
+}
+
+.switch > div > input:disabled + label, .switch > div > input:disabled + label:before {
+  border-color: black;
+}
+
+.switch > div > input:disabled + label:before {
+  background-color: black;
+}
