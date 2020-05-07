@@ -7,6 +7,90 @@ var bt_minus = document.getElementById('minus');
 var storage = 'state';
 var debug = false;
 
+function assert(condition, message) {
+    if (!condition) {
+        throw new Error(message || 'Assertion failed');
+    }
+}
+
+
+function State(string) {
+
+    this.currentstate = 'stopped'
+    this.value = moment.duration(0)
+
+
+    if (string && string.currentstate && string.value) {
+        assert('object' === typeof string)
+        if (string.currentstate == 'started') {
+
+
+            this.currentstate = string.currentstate
+            string.value.isValid()
+        }
+        if (string.currentstate == 'stopped') {
+            this.currentstate = string.currentstate
+            moment.isDuration(string.value)
+        }
+    }
+
+}
+
+State.prototype.isValid = function () {
+    if (debug) console.log('function: isvalid, ', stringify(obj));
+    if (obj == null || obj.currentstate == null) return false;
+    switch (obj.currentstate) {
+        case 'started':
+            if (obj.startTime.isValid() & obj.duration == null) {
+                if (obj.startTime > moment()) { // no negative for now
+                    console.error('negative startTime');
+                    return false
+                }
+                return true
+            }
+            break;
+        case 'stopped':
+            if (obj.startTime == null & moment.isDuration(obj.duration)) {
+                if (obj.duration < 0) { // no negative for now
+                    console.error('negative duration');
+                    return false
+                }
+                return true
+            }
+            break;
+        default:
+            console.error('Invalid state');
+            return false
+    }
+    return false
+}
+
+State.prototype.tostring = function () {
+    throw ''
+    let result = {};
+    if (obj == null || obj.currentstate == null) return '{}';
+    result.currentstate = obj.currentstate;
+
+    if (obj.startTime == null) {
+        result.startTime = 'null';
+    } else if (obj.startTime.isValid()) {
+        result.startTime = obj.startTime.format();
+    } else {
+        return '{}';
+    }
+
+    if (obj.duration == null) {
+        result.duration = 'null';
+    } else if (moment.isDuration(obj.duration)) {
+        result.duration = obj.duration.toISOString();
+    } else {
+        return '{}';
+    }
+    return JSON.stringify(result)
+}
+
+
+
 
 
 
@@ -38,57 +122,7 @@ function newstate(status) {//to check/
     return newobj
 }
 
-function stringify(obj) {
-    let result = {};
-    if (obj == null || obj.currentstate == null) return '{}';
-    result.currentstate = obj.currentstate;
 
-    if (obj.startTime == null) {
-        result.startTime = 'null';
-    } else if (obj.startTime.isValid()) {
-        result.startTime = obj.startTime.format();
-    } else {
-        return '{}';
-    }
-
-    if (obj.duration == null) {
-        result.duration = 'null';
-    } else if (moment.isDuration(obj.duration)) {
-        result.duration = obj.duration.toISOString();
-    } else {
-        return '{}';
-    }
-    return JSON.stringify(result)
-}
-
-function isvalid(obj) {//to check/
-    if (debug) console.log('function: isvalid, ', stringify(obj));
-    if (obj == null || obj.currentstate == null) return false;
-    switch (obj.currentstate) {
-        case 'started':
-            if (obj.startTime.isValid() & obj.duration == null) {
-                if (obj.startTime > moment()) { // no negative for now
-                    console.error('negative startTime');
-                    return false
-                }
-                return true
-            }
-            break;
-        case 'stopped':
-            if (obj.startTime == null & moment.isDuration(obj.duration)) {
-                if (obj.duration < 0) { // no negative for now
-                    console.error('negative duration');
-                    return false
-                }
-                return true
-            }
-            break;
-        default:
-            console.error('Invalid state');
-            return false
-    }
-    return false
-}
 
 function save(obj) {//to check/
     if (debug) console.log('function: save, ', stringify(obj));
@@ -340,6 +374,16 @@ function init() {//to check/
         return newstate('stopped')
     }
 }
+
+
+
+
+
+
+var statemachine = new State()
+
+console.log(statemachine)
+
 
 
 var state = init();
