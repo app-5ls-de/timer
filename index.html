@@ -171,10 +171,9 @@
             // stop the event from bubbling up
             e.preventDefault()
 
-            if (debug) console.log('button: minus-long, ', statemachine.tostring()); //todelete
             statemachine.backup()
             statemachine.stop(moment.duration(-25, 'minutes'))
-            longpressed=true
+            longpressed = (new Date()).getTime()
         });
 
 

@@ -7,7 +7,6 @@ var bt_plus = document.getElementById('plus')
 var bt_minus = document.getElementById('minus')
 
 var timer
-var debug = false
 var longpressed
 var negativeallowed = true
 var buttontext = {
@@ -30,15 +29,12 @@ function assert(condition, message) {
 
 
 function State() {
-    if (debug) console.log('function: initialisation of State, '); //todelete
     this.state = 'stopped'
     this.value = moment.duration(0)
 }
 
 
 State.prototype.init = function (options) {
-    if (debug) console.log('function: init, ', statemachine.tostring()); //todelete
-
     if (options && typeof options === 'object') {
         if (options.state && options.value) {
             if (options.state == 'started') {
@@ -73,29 +69,25 @@ State.prototype.tostring = function () {
 
 
 State.prototype.save = function () {
-    if (debug) console.log('function: save, ', statemachine.tostring()); //todelete
     window.localStorage.setItem(storage, this.tostring())
 }
 
 
 State.prototype.clear = function () {
-    if (debug) console.log('function: clear, ', statemachine.tostring()); //todelete
     this.stop(moment.duration(0))
 }
 
 
 State.prototype.backup = function () {
-    if (debug) console.log('function: backup, ', statemachine.tostring()); //todelete
     this.old = {
         'state': this.state,
         'value': this.value
     }
-    bt_clear.innerHTML=buttontext.bt_clear[1]
+    bt_clear.innerHTML = buttontext.bt_clear[1]
 }
 
 
 State.prototype.restore = function () {
-    if (debug) console.log('function: restore, ', statemachine.tostring()); //todelete
     if (this.old.state == 'started') {
         this.start(this.old.value)
     } else if (this.old.state == 'stopped') {
@@ -105,7 +97,6 @@ State.prototype.restore = function () {
 
 
 State.prototype.clean = function () {
-    if (debug) console.log('function: clean, ', statemachine.tostring()); //todelete
     if (this.old) {
         bt_clear.innerHTML = buttontext.bt_clear[0]
         this.old = undefined
@@ -117,7 +108,6 @@ State.prototype.clean = function () {
 
 
 State.prototype.toggle = function () {
-    if (debug) console.log('function: toggle, ', statemachine.tostring()); //todelete
     if (this.state == 'started') {
         this.stop()
     } else if (this.state == 'stopped') {
@@ -127,7 +117,6 @@ State.prototype.toggle = function () {
 
 
 State.prototype.add = function (number, unit) {
-    if (debug) console.log('function: add, ', statemachine.tostring()); //todelete
     unit = unit || ''
     assert(typeof unit === 'string')
     assert(typeof number === 'number')
@@ -161,20 +150,17 @@ State.prototype.updater = {}
 
 State.prototype.updater.on = function () {
     statemachine.display()
-    if (debug) console.log('function: updater.on, ', statemachine.tostring()); //todelete
     timer = setInterval(function () { statemachine.display() }, 1000)
 }
 
 
 State.prototype.updater.off = function () {
     statemachine.display()
-    if (debug) console.log('function: updater.off, ', statemachine.tostring()); //todelete
     clearInterval(timer)
 }
 
 
 State.prototype.start = function (value) {
-    if (debug) console.log('function: start, ', statemachine.tostring()); //todelete
     if (!value) {
         if (this.state == 'started') {
             value = this.value
@@ -191,7 +177,6 @@ State.prototype.start = function (value) {
 
 
 State.prototype.stop = function (value) {
-    if (debug) console.log('function: stop, ', statemachine.tostring()); //todelete
     if (!value) {
         if (this.state == 'started') {
             value = moment.duration(moment().diff(this.value))
@@ -208,7 +193,6 @@ State.prototype.stop = function (value) {
 
 
 State.prototype.display = function () {
-    if (debug) console.log('function: display, ', statemachine.tostring()); //todelete
     let duration
     if (this.state == 'started') {
         duration = moment.duration(moment().diff(this.value))
@@ -237,13 +221,11 @@ statemachine.init(JSON.parse(window.localStorage.getItem(storage)))
 
 
 bt_toggle.onclick = function () {
-    if (debug) console.log('button: toggle, ', statemachine.tostring()); //todelete
     statemachine.clean()
     statemachine.toggle()
 }
 
 bt_clear.onclick = function () {
-    if (debug) console.log('button: clear, ', statemachine.tostring()); //todelete
     if (statemachine.old) {
         statemachine.restore()
         statemachine.clean()
@@ -254,14 +236,12 @@ bt_clear.onclick = function () {
 }
 
 bt_plus.onclick = function () {
-    if (debug) console.log('button: plus, ', statemachine.tostring()); //todelete
     statemachine.clean()
     statemachine.add(1, 'minutes')
 }
 
 bt_minus.onclick = function () {
-    if (debug) console.log('button: minus, ', statemachine.tostring()); //todelete
-    if (!longpressed) {
+    if ((!longpressed) || (new Date()).getTime() - longpressed > 1000) {
         statemachine.clean()
         statemachine.add(-1, 'minutes')
     }
