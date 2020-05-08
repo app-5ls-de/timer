@@ -90,6 +90,7 @@ State.prototype.backup = function () {
         'state': this.state,
         'value': this.value
     }
+    bt_clear.innerHTML=buttontext.bt_clear[1]
 }
 
 
@@ -260,11 +261,8 @@ bt_plus.onclick = function () {
 
 bt_minus.onclick = function () {
     if (debug) console.log('button: minus, ', statemachine.tostring()); //todelete
-    if (longpressed) {
-        statemachine.clean()
-    } else {
+    if (!longpressed) {
         statemachine.clean()
         statemachine.add(-1, 'minutes')
     }
-
 }
