@@ -7,7 +7,8 @@ var bt_plus = document.getElementById('plus')
 var bt_minus = document.getElementById('minus')
 
 var timer
-var debug=false
+var debug = false
+var negativeallowed = true
 var buttontext = {
     'bt_toggle': {
         'start': 'start',
@@ -59,14 +60,14 @@ State.prototype.tostring = function () {
     if (this.state == 'started') {
         return JSON.stringify({
             state: this.state,
-            value:  this.value.toISOString(true)
+            value: this.value.toISOString(true)
         })
     } else if (this.state == 'stopped') {
         return JSON.stringify({
             state: this.state,
             value: this.value
         })
-    }    
+    }
 }
 
 
@@ -131,15 +132,19 @@ State.prototype.add = function (number, unit) {
 
     if (this.state == 'started') {
         this.value = this.value.subtract(durationToAdd)
-        if (this.value > moment()) { // no negative for now
-            console.error('negative time not allowed')
-            this.value = moment()
+        if (!negativeallowed) {
+            if (this.value > moment()) { // no negative for now
+                console.error('negative time not allowed')
+                this.value = moment()
+            }
         }
     } else if (this.state == 'stopped') {
         this.value = this.value.add(durationToAdd)
-        if (this.value < 0) { // no negative for now
-            console.error('negative time not allowed')
-            this.value = moment.duration(0)
+        if (!negativeallowed) {
+            if (this.value < 0) { // no negative for now
+                console.error('negative time not allowed')
+                this.value = moment.duration(0)
+            }
         }
     }
     this.display()
@@ -209,10 +214,11 @@ State.prototype.display = function () {
     function pretty(num) {
         return (num ? (num > 9 ? num : "0" + num) : "00")
     }
+
     let textContent = ''
     if (duration < 0) {
         textContent = '-'
-        duration = moment.duration(-duration + 1000)//add one second because duration.seconds always roudns down
+        duration = moment.duration(-duration + 999)//add one second because duration.seconds always roudns down
     }
     textContent += pretty(Math.floor(duration.asHours())) + ":" + pretty(duration.minutes()) + ":" + pretty(duration.seconds())
     h1_time.textContent = textContent
