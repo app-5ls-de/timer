@@ -8,6 +8,7 @@ var bt_minus = document.getElementById('minus')
 
 var timer
 var debug = false
+var longpressed
 var negativeallowed = true
 var buttontext = {
     'bt_toggle': {
@@ -16,7 +17,7 @@ var buttontext = {
     },
     'bt_clear': {
         '0': 'clear',
-        '1': 'unclear'
+        '1': 'back'
     }
 }
 
@@ -107,6 +108,9 @@ State.prototype.clean = function () {
     if (this.old) {
         bt_clear.innerHTML = buttontext.bt_clear[0]
         this.old = undefined
+    }
+    if (longpressed) {
+        longpressed = undefined
     }
 }
 
@@ -256,6 +260,11 @@ bt_plus.onclick = function () {
 
 bt_minus.onclick = function () {
     if (debug) console.log('button: minus, ', statemachine.tostring()); //todelete
-    statemachine.clean()
-    statemachine.add(-1, 'minutes')
+    if (longpressed) {
+        statemachine.clean()
+    } else {
+        statemachine.clean()
+        statemachine.add(-1, 'minutes')
+    }
+
 }
