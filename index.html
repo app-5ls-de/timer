@@ -144,12 +144,18 @@
         button.left {
             margin-right: 0.5rem;
         }
+
+        span#pomodoro-info {
+            display: none;
+            color: gray;
+        }
     </style>
 </head>
 
 <body>
     <div class="main">
         <div class="timer">
+            <span id="pomodoro-info"></span>
             <h1><time>00:00:00</time></h1>
             <div class="buttons">
                 <button class="left" id="minus">-1</button>

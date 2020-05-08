@@ -5,8 +5,14 @@ var bt_toggle = document.getElementById('toggle')
 var bt_clear = document.getElementById('clear')
 var bt_plus = document.getElementById('plus')
 var bt_minus = document.getElementById('minus')
+var sp_pomodoroinfo = document.getElementById('pomodoro-info')
 
 var timer
+var pomodorominutes = 25
+var pomodorodisplayed
+
+sp_pomodoroinfo.textContent = '+' + pomodorominutes + 'min'
+
 var longpressed
 var buttontext = {
     'bt_toggle': {
@@ -30,6 +36,7 @@ function assert(condition, message) {
 function State() {
     this.state = 'stopped'
     this.value = moment.duration(0)
+    this.pomodoroactive = false
 }
 
 
@@ -47,23 +54,26 @@ State.prototype.init = function (options) {
                     this.stop(value)
                 }
             }
+            if (options.pomodoroactive) {
+                this.pomodoroactive = true
+            }
         }
     }
 }
 
 
 State.prototype.tostring = function () {
-    if (this.state == 'started') {
-        return JSON.stringify({
-            state: this.state,
-            value: this.value.toISOString(true)
-        })
-    } else if (this.state == 'stopped') {
-        return JSON.stringify({
-            state: this.state,
-            value: this.value
-        })
+    json = {
+        'state': this.state,
+        'pomodoroactive': this.pomodoroactive
     }
+
+    if (this.state == 'started') {
+        json.value = this.value.toISOString(true)
+    } else if (this.state == 'stopped') {
+        json.value = this.value
+    }
+    return JSON.stringify(json)
 }
 
 
@@ -73,6 +83,7 @@ State.prototype.save = function () {
 
 
 State.prototype.clear = function () {
+    this.pomodoroactive = false
     this.stop(moment.duration(0))
 }
 
@@ -80,13 +91,15 @@ State.prototype.clear = function () {
 State.prototype.backup = function () {
     this.old = {
         'state': this.state,
-        'value': this.value
+        'value': this.value,
+        'pomodoroactive': this.pomodoroactive
     }
     bt_clear.innerHTML = buttontext.bt_clear[1]
 }
 
 
 State.prototype.restore = function () {
+    this.pomodoroactive = this.old.pomodoroactive
     if (this.old.state == 'started') {
         this.start(this.old.value)
     } else if (this.old.state == 'stopped') {
@@ -191,6 +204,20 @@ State.prototype.display = function () {
         return (num ? (num > 9 ? num : "0" + num) : "00")
     }
 
+
+    if (pomodorodisplayed == true) {
+        if (this.pomodoroactive == false || duration < 0) {
+            sp_pomodoroinfo.style.display = 'none'
+            pomodorodisplayed = false
+        }
+    } else {
+        if (this.pomodoroactive == true && duration > 0) {
+            sp_pomodoroinfo.style.display = 'unset'
+            pomodorodisplayed = true
+        }
+    }
+
+
     let textContent = ''
     if (duration < 0) {
         textContent = '-'
@@ -213,6 +240,7 @@ bt_toggle.onclick = function () {
 }
 
 bt_clear.onclick = function () {
+    pomodoroactive = false
     if (statemachine.old) {
         statemachine.restore()
         statemachine.clean()
@@ -243,7 +271,8 @@ bt_minus.addEventListener('long-press', function (e) {
     e.preventDefault()
 
     statemachine.backup()
-    statemachine.stop(moment.duration(-pomodoro.minutes, 'minutes'))
+    statemachine.pomodoroactive = true
+    statemachine.stop(moment.duration(-pomodorominutes, 'minutes'))
     longpressed = (new Date()).getTime()
 })
 
