@@ -1,398 +1,255 @@
-moment.locale('de');
-var h1_time = document.getElementsByTagName('time')[0];
-var bt_toggle = document.getElementById('toggle');
-var bt_clear = document.getElementById('clear');
-var bt_plus = document.getElementById('plus');
-var bt_minus = document.getElementById('minus');
-var storage = 'state';
-var debug = false;
+moment.locale('de')
+
+var h1_time = document.getElementsByTagName('time')[0]
+var bt_toggle = document.getElementById('toggle')
+var bt_clear = document.getElementById('clear')
+var bt_plus = document.getElementById('plus')
+var bt_minus = document.getElementById('minus')
+
+var timer
+var debug=false
+var buttontext = {
+    'bt_toggle': {
+        'start': 'start',
+        'stop': 'stop'
+    },
+    'bt_clear': {
+        '0': 'clear',
+        '1': 'unclear'
+    }
+}
+
 
 function assert(condition, message) {
     if (!condition) {
-        throw new Error(message || 'Assertion failed');
+        throw new Error(message || 'Assertion failed')
     }
 }
 
 
-function State(string) {
-
-    this.currentstate = 'stopped'
+function State() {
+    if (debug) console.log('function: initialisation of State, '); //todelete
+    this.state = 'stopped'
     this.value = moment.duration(0)
-
-
-    if (string && string.currentstate && string.value) {
-        assert('object' === typeof string)
-        if (string.currentstate == 'started') {
-
-
-            this.currentstate = string.currentstate
-            string.value.isValid()
-        }
-        if (string.currentstate == 'stopped') {
-            this.currentstate = string.currentstate
-            moment.isDuration(string.value)
-        }
-    }
-
 }
 
-State.prototype.isValid = function () {
-    if (debug) console.log('function: isvalid, ', stringify(obj));
-    if (obj == null || obj.currentstate == null) return false;
-    switch (obj.currentstate) {
-        case 'started':
-            if (obj.startTime.isValid() & obj.duration == null) {
-                if (obj.startTime > moment()) { // no negative for now
-                    console.error('negative startTime');
-                    return false
+
+State.prototype.init = function (options) {
+    if (debug) console.log('function: init, ', statemachine.tostring()); //todelete
+
+    if (options && typeof options === 'object') {
+        if (options.state && options.value) {
+            if (options.state == 'started') {
+                let value = moment(options.value)
+                if (value.isValid()) {
+                    this.start(value)
                 }
-                return true
-            }
-            break;
-        case 'stopped':
-            if (obj.startTime == null & moment.isDuration(obj.duration)) {
-                if (obj.duration < 0) { // no negative for now
-                    console.error('negative duration');
-                    return false
+            } else if (options.state == 'stopped') {
+                let value = moment.duration(options.value)
+                if (moment.isDuration(value)) {
+                    this.stop(value)
                 }
-                return true
             }
-            break;
-        default:
-            console.error('Invalid state');
-            return false
+        }
     }
-    return false
 }
+
 
 State.prototype.tostring = function () {
-    throw ''
-    let result = {};
-    if (obj == null || obj.currentstate == null) return '{}';
-    result.currentstate = obj.currentstate;
-
-    if (obj.startTime == null) {
-        result.startTime = 'null';
-    } else if (obj.startTime.isValid()) {
-        result.startTime = obj.startTime.format();
-    } else {
-        return '{}';
-    }
-
-    if (obj.duration == null) {
-        result.duration = 'null';
-    } else if (moment.isDuration(obj.duration)) {
-        result.duration = obj.duration.toISOString();
-    } else {
-        return '{}';
-    }
-    return JSON.stringify(result)
+    if (this.state == 'started') {
+        return JSON.stringify({
+            state: this.state,
+            value:  this.value.toISOString(true)
+        })
+    } else if (this.state == 'stopped') {
+        return JSON.stringify({
+            state: this.state,
+            value: this.value
+        })
+    }    
 }
 
 
-
-
-
-
-function newstate(status) {//to check/
-    if (debug) console.log('function: newstate, ', status);
-    status = status || 'stopped';
-
-    let newobj;
-    switch (status) {
-        case 'started':
-            newobj = {
-                currentstate: 'started',
-                duration: null,
-                startTime: moment()
-            }
-            break;
-        case 'stopped':
-            newobj = {
-                currentstate: 'stopped',
-                duration: moment.duration(0),
-                startTime: null
-            }
-            break;
-        default:
-            console.error('Invalid input');
-            return newstate()
-    }
-
-    return newobj
+State.prototype.save = function () {
+    if (debug) console.log('function: save, ', statemachine.tostring()); //todelete
+    window.localStorage.setItem(storage, this.tostring())
 }
 
 
-
-function save(obj) {//to check/
-    if (debug) console.log('function: save, ', stringify(obj));
-    window.localStorage.setItem(storage, stringify(obj));
+State.prototype.clear = function () {
+    if (debug) console.log('function: clear, ', statemachine.tostring()); //todelete
+    this.stop(moment.duration(0))
 }
 
-function add(obj, number, unit) {//to check/
-    if (debug) console.log('function: add, ', stringify(obj), number, unit);
-    unit = unit || '';
 
-    bt_clear.innerHTML = 'clear';
-    oldstate = undefined;
-
-    let durationToAdd = moment.duration(number, unit);
-    if (!moment.isDuration(durationToAdd)) {
-        console.error('invalid duration to add');
-        newobj = newstate();
-        save(newobj);
-        display(newobj);
-        return newobj
+State.prototype.backup = function () {
+    if (debug) console.log('function: backup, ', statemachine.tostring()); //todelete
+    this.old = {
+        'state': this.state,
+        'value': this.value
     }
-
-    let newobj;
-    switch (obj.currentstate) {
-        case 'started':
-            newobj = newstate('started');
-            newobj.startTime = obj.startTime.subtract(durationToAdd);
-            break;
-        case 'stopped':
-            newobj = newstate('stopped');
-            newobj.duration = obj.duration.add(durationToAdd);
-            break;
-        default:
-            console.error('Invalid state');
-            newobj = newstate();
-    }
-
-    if (!isvalid(newobj)) {
-        console.error('Invalid state');
-        newobj = newstate(obj.currentstate);
-    }
-    save(newobj);
-    display(newobj);
-    return newobj
 }
 
-function display(obj) {//to check/
-    if (debug) console.log('function: display, ', stringify(obj));
-    obj = obj || state;
 
-    let duration;
+State.prototype.restore = function () {
+    if (debug) console.log('function: restore, ', statemachine.tostring()); //todelete
+    if (this.old.state == 'started') {
+        this.start(this.old.value)
+    } else if (this.old.state == 'stopped') {
+        this.stop(this.old.value)
+    }
+}
 
-    switch (obj.currentstate) {
-        case 'started':
-            duration = moment.duration(moment().diff(obj.startTime));
-            break;
-        case 'stopped':
-            duration = obj.duration;
-            break;
-        default:
-            console.error('Invalid state');
-            duration = moment.duration(0);
+
+State.prototype.clean = function () {
+    if (debug) console.log('function: clean, ', statemachine.tostring()); //todelete
+    if (this.old) {
+        bt_clear.innerHTML = buttontext.bt_clear[0]
+        this.old = undefined
+    }
+}
+
+
+State.prototype.toggle = function () {
+    if (debug) console.log('function: toggle, ', statemachine.tostring()); //todelete
+    if (this.state == 'started') {
+        this.stop()
+    } else if (this.state == 'stopped') {
+        this.start()
+    }
+}
+
+
+State.prototype.add = function (number, unit) {
+    if (debug) console.log('function: add, ', statemachine.tostring()); //todelete
+    unit = unit || ''
+    assert(typeof unit === 'string')
+    assert(typeof number === 'number')
+
+    let durationToAdd = moment.duration(number, unit)
+    assert(moment.isDuration(durationToAdd))
+
+    if (this.state == 'started') {
+        this.value = this.value.subtract(durationToAdd)
+        if (this.value > moment()) { // no negative for now
+            console.error('negative time not allowed')
+            this.value = moment()
+        }
+    } else if (this.state == 'stopped') {
+        this.value = this.value.add(durationToAdd)
+        if (this.value < 0) { // no negative for now
+            console.error('negative time not allowed')
+            this.value = moment.duration(0)
+        }
+    }
+    this.display()
+    this.save()
+}
+
+
+State.prototype.updater = {}
+
+State.prototype.updater.on = function () {
+    statemachine.display()
+    if (debug) console.log('function: updater.on, ', statemachine.tostring()); //todelete
+    timer = setInterval(function () { statemachine.display() }, 1000)
+}
+
+
+State.prototype.updater.off = function () {
+    statemachine.display()
+    if (debug) console.log('function: updater.off, ', statemachine.tostring()); //todelete
+    clearInterval(timer)
+}
+
+
+State.prototype.start = function (value) {
+    if (debug) console.log('function: start, ', statemachine.tostring()); //todelete
+    if (!value) {
+        if (this.state == 'started') {
+            value = this.value
+        } else if (this.state == 'stopped') {
+            value = moment().subtract(this.value)
+        }
+    }
+    this.state = 'started'
+    this.value = value
+    bt_toggle.innerText = buttontext.bt_toggle.stop
+    this.save()
+    this.updater.on()
+}
+
+
+State.prototype.stop = function (value) {
+    if (debug) console.log('function: stop, ', statemachine.tostring()); //todelete
+    if (!value) {
+        if (this.state == 'started') {
+            value = moment.duration(moment().diff(this.value))
+        } else if (this.state == 'stopped') {
+            value = this.value
+        }
+    }
+    this.state = 'stopped'
+    this.value = value
+    bt_toggle.innerText = buttontext.bt_toggle.start
+    this.save()
+    this.updater.off()
+}
+
+
+State.prototype.display = function () {
+    if (debug) console.log('function: display, ', statemachine.tostring()); //todelete
+    let duration
+    if (this.state == 'started') {
+        duration = moment.duration(moment().diff(this.value))
+    } else if (this.state == 'stopped') {
+        duration = this.value
     }
 
     function pretty(num) {
-        return (num ? (num > 9 ? num : "0" + num) : "00");
+        return (num ? (num > 9 ? num : "0" + num) : "00")
     }
-
-    h1_time.textContent = pretty(Math.floor(duration.asHours())) + ":" + pretty(duration.minutes()) + ":" + pretty(duration.seconds());
-}
-
-function iszero(obj) {
-    if (debug) console.log('function: iszero, ', stringify(obj));
-
-    if (obj.currentstate == 'stopped' && obj.duration.asMilliseconds() == 0) {
-        return true
+    let textContent = ''
+    if (duration < 0) {
+        textContent = '-'
+        duration = moment.duration(-duration + 1000)//add one second because duration.seconds always roudns down
     }
-    return false
-}
-
-function clear(obj) {//to check/
-    if (debug) console.log('function: clear, ', stringify(obj));
-    let newobj;
-
-    if (bt_clear.innerHTML == 'unclear') {
-        bt_clear.innerHTML = 'clear';
-        if (isvalid(oldstate)) {
-            newobj = oldstate;
-            oldstate = undefined;
-            switch (newobj.currentstate) {
-                case 'started':
-                    timer = window.setInterval(display, 1000);
-                    if (debug) console.log('Interval set');
-                    bt_toggle.innerText = 'stop';
-                    break;
-                case 'stopped':
-                    bt_toggle.innerText = 'start';
-                    break;
-            }
-
-            save(newobj);
-            display(newobj);
-            return newobj
-        }
-        oldstate = undefined;
-    }
-
-    if (!iszero(obj)) {
-        oldstate = obj;
-        bt_clear.innerHTML = 'unclear';
-    }
-
-    switch (obj.currentstate) {
-        case 'started':
-            newobj = newstate('stopped');
-            clearInterval(timer);
-            if (debug) console.log('Interval clear');
-            bt_toggle.innerText = 'start';
-            break;
-        case 'stopped':
-            newobj = newstate('stopped');
-            break;
-        default:
-            console.error('Invalid state');
-            newobj = newstate();
-    }
-    save(newobj);
-    display(newobj);
-    return newobj
-}
-
-function toggle(obj) {//to check/
-    if (debug) console.log('function: toggl, ', stringify(obj));
-
-    bt_clear.innerHTML = 'clear';
-    oldstate = undefined;
-
-    function stop(obj) {
-        if (debug) console.log('function: stop, ', stringify(obj));
-        let newobj;
-        switch (obj.currentstate) {
-            case 'started':
-                newobj = newstate();
-                newobj.duration = moment.duration(moment().diff(obj.startTime));
-                newobj.startTime = null;
-                newobj.currentstate = 'stopped';
-                bt_toggle.innerText = 'start';
-                save(newobj);
-                break;
-            case 'stopped':
-                return obj;
-                break;
-            default:
-                console.error('Invalid state');
-                newobj = newstate();
-        }
-        return newobj
-    }
-
-    function start(obj) {
-        if (debug) console.log('function: start, ', stringify(obj));
-        let newobj;
-        switch (obj.currentstate) {
-            case 'started':
-                return obj;
-                break;
-            case 'stopped':
-                newobj = newstate();
-                newobj.startTime = moment().subtract(obj.duration);
-                newobj.duration = null;
-                newobj.currentstate = 'started';
-                bt_toggle.innerText = 'stop';
-                save(newobj);
-                break;
-            default:
-                console.error('Invalid state');
-                newobj = newstate();
-        }
-        return newobj
-    }
-
-
-
-    let newobj;
-    switch (obj.currentstate) {
-        case 'started':
-            newobj = stop(obj);
-            clearInterval(timer);
-            display(newobj);
-            if (debug) console.log('Interval clear');
-            break;
-        case 'stopped':
-            newobj = start(obj);
-            timer = window.setInterval(display, 1000);
-            if (debug) console.log('Interval set');
-            display(newobj);
-            break;
-        default:
-            console.error('Invalid state');
-            newobj = newstate();
-    }
-    return newobj
-}
-
-function init() {//to check/
-    let json = JSON.parse(window.localStorage.getItem(storage));
-    if (debug) console.log('function: init, ', json);
-    let newobj = {};
-
-    if (json == null || json.currentstate == null) {
-        window.localStorage.clear();
-        return newstate('stopped');
-    }
-
-    switch (json.currentstate) {
-        case 'started':
-            newobj.currentstate = json.currentstate;
-            newobj.startTime = moment(json.startTime);
-            newobj.duration = null;
-            break;
-        case 'stopped':
-            newobj.currentstate = json.currentstate;
-            newobj.startTime = null;
-            newobj.duration = moment.duration(json.duration);
-            break;
-        default:
-            console.error('Invalid state');
-            window.localStorage.clear();
-            return newstate('stopped');
-    }
-
-    if (isvalid(newobj)) {
-        display(newobj);
-        switch (newobj.currentstate) {
-            case 'started':
-                timer = window.setInterval(display, 1000);
-                if (debug) console.log('Interval set');
-                bt_toggle.innerText = 'stop';
-                break;
-            case 'stopped':
-                clearInterval(timer);
-                if (debug) console.log('Interval clear');
-                bt_toggle.innerText = 'start';
-                break;
-        }
-        return newobj
-    } else {
-        window.localStorage.clear();
-        return newstate('stopped')
-    }
+    textContent += pretty(Math.floor(duration.asHours())) + ":" + pretty(duration.minutes()) + ":" + pretty(duration.seconds())
+    h1_time.textContent = textContent
 }
 
 
-
-
-
+var storage = 'state'
 
 var statemachine = new State()
-
-console.log(statemachine)
-
+statemachine.init(JSON.parse(window.localStorage.getItem(storage)))
 
 
-var state = init();
-var oldstate;
-var timer;
+bt_toggle.onclick = function () {
+    if (debug) console.log('button: toggle, ', statemachine.tostring()); //todelete
+    statemachine.clean()
+    statemachine.toggle()
+}
 
+bt_clear.onclick = function () {
+    if (debug) console.log('button: clear, ', statemachine.tostring()); //todelete
+    if (statemachine.old) {
+        statemachine.restore()
+        statemachine.clean()
+    } else if (!(statemachine.state == 'stopped' && statemachine.value == 0)) {
+        statemachine.backup()
+        statemachine.clear()
+    }
+}
 
-bt_toggle.onclick = function () { state = toggle(state); };
-bt_clear.onclick = function () { state = clear(state); };
-bt_plus.onclick = function () { state = add(state, 1, 'minutes') };
-bt_minus.onclick = function () { state = add(state, -1, 'minutes') };
+bt_plus.onclick = function () {
+    if (debug) console.log('button: plus, ', statemachine.tostring()); //todelete
+    statemachine.clean()
+    statemachine.add(1, 'minutes')
+}
 
+bt_minus.onclick = function () {
+    if (debug) console.log('button: minus, ', statemachine.tostring()); //todelete
+    statemachine.clean()
+    statemachine.add(-1, 'minutes')
+}
