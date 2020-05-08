@@ -43,6 +43,10 @@ function State() {
 State.prototype.init = function (options) {
     if (options && typeof options === 'object') {
         if (options.state && options.value) {
+            if (options.pomodoroactive) {
+                console.log(this)
+                this.pomodoroactive = true
+            }
             if (options.state == 'started') {
                 let value = moment(options.value)
                 if (value.isValid()) {
@@ -53,9 +57,6 @@ State.prototype.init = function (options) {
                 if (moment.isDuration(value)) {
                     this.stop(value)
                 }
-            }
-            if (options.pomodoroactive) {
-                this.pomodoroactive = true
             }
         }
     }
