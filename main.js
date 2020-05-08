@@ -8,7 +8,6 @@ var bt_minus = document.getElementById('minus')
 
 var timer
 var longpressed
-var negativeallowed = true
 var buttontext = {
     'bt_toggle': {
         'start': 'start',
@@ -126,20 +125,8 @@ State.prototype.add = function (number, unit) {
 
     if (this.state == 'started') {
         this.value = this.value.subtract(durationToAdd)
-        if (!negativeallowed) {
-            if (this.value > moment()) { // no negative for now
-                console.error('negative time not allowed')
-                this.value = moment()
-            }
-        }
     } else if (this.state == 'stopped') {
         this.value = this.value.add(durationToAdd)
-        if (!negativeallowed) {
-            if (this.value < 0) { // no negative for now
-                console.error('negative time not allowed')
-                this.value = moment.duration(0)
-            }
-        }
     }
     this.display()
     this.save()
