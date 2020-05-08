@@ -135,6 +135,7 @@ State.prototype.add = function (number, unit) {
 
 State.prototype.updater = {}
 
+
 State.prototype.updater.on = function () {
     statemachine.display()
     timer = setInterval(function () { statemachine.display() }, 1000)
@@ -233,3 +234,17 @@ bt_minus.onclick = function () {
         statemachine.add(-1, 'minutes')
     }
 }
+
+
+// listen for the long-press event
+bt_minus.addEventListener('long-press', function (e) {
+
+    // stop the event from bubbling up
+    e.preventDefault()
+
+    statemachine.backup()
+    statemachine.stop(moment.duration(-pomodoro.minutes, 'minutes'))
+    longpressed = (new Date()).getTime()
+})
+
+

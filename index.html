@@ -161,24 +161,9 @@
     </div>
 
     <script src="/moment.min.js"></script>
-    <script src="main.js"></script>
-    <script src="long-press-event.min.js"></script>
+    <script src="/long-press-event.min.js"></script>
+    <script src="/main.js"></script>
     <script>
-
-        // listen for the long-press event
-        bt_minus.addEventListener('long-press', function (e) {
-
-            // stop the event from bubbling up
-            e.preventDefault()
-
-            statemachine.backup()
-            statemachine.stop(moment.duration(-25, 'minutes'))
-            longpressed = (new Date()).getTime()
-        });
-
-
-
-
         if ("serviceWorker" in navigator) {
             if (navigator.serviceWorker.controller) {
                 console.log("[ServiceWorker] active service worker found");
