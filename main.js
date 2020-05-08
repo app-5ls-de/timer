@@ -135,7 +135,6 @@ State.prototype.add = function (number, unit) {
 
 State.prototype.updater = {}
 
-
 State.prototype.updater.on = function () {
     statemachine.display()
     timer = setInterval(function () { statemachine.display() }, 1000)
@@ -233,6 +232,7 @@ bt_minus.onclick = function () {
         statemachine.clean()
         statemachine.add(-1, 'minutes')
     }
+
 }
 
 
@@ -248,3 +248,7 @@ bt_minus.addEventListener('long-press', function (e) {
 })
 
 
+bt_minus.onmouseup = function () { this.blur() }
+bt_plus.onmouseup = function () { this.blur() }
+bt_toggle.onmouseup = function () { this.blur() }
+bt_clear.onmouseup = function () { this.blur() }
