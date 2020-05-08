@@ -1,8 +1,8 @@
 const CACHE = "static-cache-v2.1.0";
 const precacheFiles = [
   '/',
-  'main.js',
-  'long-press-event.min.js',
+  '/main.js',
+  '/long-press-event.min.js',
   '/index.html',
   '/manifest.json',
   '/favicon.ico',
