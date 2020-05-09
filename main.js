@@ -245,7 +245,7 @@ bt_clear.onclick = function () {
     if (statemachine.old) {
         statemachine.restore()
         statemachine.clean()
-    } else if (!(statemachine.state == 'stopped' && statemachine.value == 0)) {
+    } else if (!(statemachine.state == 'stopped' && !statemachine.value && !statemachine.pomodoroactive)) {
         statemachine.backup()
         statemachine.clear()
     }
