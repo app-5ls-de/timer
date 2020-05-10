@@ -45,7 +45,6 @@ State.prototype.init = function (options) {
     if (options && typeof options === 'object') {
         if (options.state && options.value) {
             if (options.pomodoroactive) {
-                console.log(this)
                 this.pomodoroactive = true
             }
             if (options.state == 'started') {
@@ -91,22 +90,14 @@ State.prototype.clear = function () {
 
 
 State.prototype.backup = function () {
-    this.old = {
-        'state': this.state,
-        'value': this.value,
-        'pomodoroactive': this.pomodoroactive
-    }
+    this.old = this.tostring()
     bt_clear.innerHTML = buttontext.bt_clear[1]
 }
 
 
 State.prototype.restore = function () {
-    this.pomodoroactive = this.old.pomodoroactive
-    if (this.old.state == 'started') {
-        this.start(this.old.value)
-    } else if (this.old.state == 'stopped') {
-        this.stop(this.old.value)
-    }
+    this.init(JSON.parse(this.old))
+    bt_clear.innerHTML = buttontext.bt_clear[0]
 }
 
 
@@ -249,7 +240,6 @@ bt_toggle.onclick = function () {
 }
 
 bt_clear.onclick = function () {
-    pomodoroactive = false
     if (statemachine.old) {
         statemachine.restore()
         statemachine.clean()
