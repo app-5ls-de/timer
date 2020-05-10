@@ -262,6 +262,7 @@ bt_minus.onclick = function () {
 
 }
 
+bt_minus.setAttribute('data-long-press-delay', 1000);
 
 // listen for the long-press event
 bt_minus.addEventListener('long-press', function (e) {
