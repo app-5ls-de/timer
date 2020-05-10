@@ -282,6 +282,9 @@ loadSettings(parse(window.localStorage.settings))
 
 
 
+if (isobject(parse(window.localStorage.oldState))){
+    bt_clear.innerHTML = buttontext.bt_clear[1]
+}
 
 
 
