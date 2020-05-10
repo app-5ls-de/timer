@@ -1,4 +1,4 @@
-const CACHE = "static-cache-v2.2.2";
+const CACHE = "static-cache-v2.3.0";
 const precacheFiles = [
   '/',
   '/main.js',
