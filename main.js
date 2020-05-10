@@ -5,7 +5,8 @@ var bt_toggle = document.getElementById('toggle')
 var bt_clear = document.getElementById('clear')
 var bt_plus = document.getElementById('plus')
 var bt_minus = document.getElementById('minus')
-var sp_pomodoroinfo = document.getElementById('pomodoro-info')
+var bt_pomodoroinfo = document.getElementById('pomodoro-info')
+var sp_pomodoroinfo = bt_pomodoroinfo.children[0]
 
 var timer
 var pomodorominutes = 25
@@ -208,12 +209,12 @@ State.prototype.display = function () {
 
     if (pomodorodisplayed == true) {
         if (this.pomodoroactive == false || duration < 0) {
-            sp_pomodoroinfo.style.display = 'none'
+            bt_pomodoroinfo.style.display = 'none'
             pomodorodisplayed = false
         }
     } else {
         if (this.pomodoroactive == true && duration > 0) {
-            sp_pomodoroinfo.style.display = 'unset'
+            bt_pomodoroinfo.style.display = 'unset'
             pomodorodisplayed = true
         }
     }
@@ -234,6 +235,13 @@ var storage = 'state'
 var statemachine = new State()
 statemachine.init(JSON.parse(window.localStorage.getItem(storage)))
 
+bt_pomodoroinfo.onclick = function () {
+    if (statemachine.pomodoroactive) {
+        statemachine.backup()
+        statemachine.pomodoroactive = false
+        statemachine.add(pomodorominutes, 'minutes')
+    }
+}
 
 bt_toggle.onclick = function () {
     statemachine.clean()
@@ -282,3 +290,4 @@ bt_minus.onmouseup = function () { this.blur() }
 bt_plus.onmouseup = function () { this.blur() }
 bt_toggle.onmouseup = function () { this.blur() }
 bt_clear.onmouseup = function () { this.blur() }
+bt_pomodoroinfo.onmouseup = function () { this.blur() }

@@ -34,6 +34,7 @@
             margin: 0px;
             padding: 0px;
             touch-action: manipulation;
+            user-select: none;
         }
 
         .main {
@@ -64,7 +65,6 @@
 
         .buttons,
         .button-group {
-            user-select: none;
             position: relative;
             display: -ms-inline-flexbox;
             display: inline-flex;
@@ -145,8 +145,14 @@
             margin-right: 0.5rem;
         }
 
-        span#pomodoro-info {
+        button#pomodoro-info {
+            height: fit-content;
+            width: fit-content;
+            background: transparent;
             display: none;
+        }
+
+        button#pomodoro-info>span {
             color: gray;
         }
     </style>
@@ -155,7 +161,9 @@
 <body>
     <div class="main">
         <div class="timer">
-            <span id="pomodoro-info"></span>
+            <button id="pomodoro-info">
+                <span></span>
+            </button>
             <h1><time>00:00:00</time></h1>
             <div class="buttons">
                 <button class="left" id="minus">-1</button>
