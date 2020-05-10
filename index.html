@@ -149,11 +149,16 @@
             height: fit-content;
             width: fit-content;
             background: transparent;
-            display: none;
         }
 
+        span#info,
         button#pomodoro-info>span {
             color: gray;
+        }
+
+        span#info,
+        button#pomodoro-info {
+            display: none;
         }
     </style>
 </head>
@@ -161,6 +166,7 @@
 <body>
     <div class="main">
         <div class="timer">
+            <span id="info"></span>
             <button id="pomodoro-info">
                 <span></span>
             </button>

@@ -7,6 +7,7 @@ var bt_plus = document.getElementById('plus')
 var bt_minus = document.getElementById('minus')
 var bt_pomodoroinfo = document.getElementById('pomodoro-info')
 var sp_pomodoroinfo = bt_pomodoroinfo.children[0]
+var sp_info = document.getElementById('info')
 
 
 if (window.localStorage.oldState == undefined) {
@@ -20,8 +21,12 @@ if (window.localStorage.settings == undefined) {
 }
 
 
+var displayed = {
+    'pomodoro': false,
+    'info': false
+}
 
-var timer, pomodorodisplayed, longpressed
+var timer, longpressed
 
 var buttontext = {
     'bt_toggle': {
@@ -118,6 +123,10 @@ State.prototype.clean = function () {
     if (longpressed) {
         longpressed = undefined
     }
+    if (displayed.info){
+        sp_info.style.display = 'none'
+        displayed.info=false
+    }
 }
 
 
@@ -213,19 +222,18 @@ State.prototype.display = function () {
     }
 
 
-    if (pomodorodisplayed == true) {
+    if (displayed.pomodoro) {
         if (this.pomodoro.active == false || duration < 0) {
             bt_pomodoroinfo.style.display = 'none'
-            pomodorodisplayed = false
+            displayed.pomodoro = false
         }
     } else {
         if (this.pomodoro.active == true && duration > 0) {
             sp_pomodoroinfo.textContent = '+' + statemachine.pomodoro.minutes + 'min'
             bt_pomodoroinfo.style.display = 'unset'
-            pomodorodisplayed = true
+            displayed.pomodoro = true
         }
     }
-
 
     let textContent = ''
     if (duration < 0) {
@@ -236,15 +244,16 @@ State.prototype.display = function () {
     h1_time.textContent = textContent
 }
 
-State.prototype.clearAll=function () {
+State.prototype.clearAll = function () {
+    this.clean()
     this.clear()
-    sp_pomodoroinfo.textContent = 'Cleared'
-    bt_pomodoroinfo.style.display = 'unset'
-    pomodorodisplayed = true
-    
+    sp_info.textContent = 'Cleared'
+    sp_info.style.display = 'unset'
+    displayed.info = true
+
     window.localStorage.oldState = '{}'
     window.localStorage.state = '{}'
-    window.localStorage.settings = '{}'   
+    window.localStorage.settings = '{}'
 }
 
 
@@ -281,6 +290,7 @@ loadSettings(parse(window.localStorage.settings))
 
 bt_pomodoroinfo.onclick = function () {
     if (statemachine.pomodoro.active) {
+        statemachine.clean()
         statemachine.backup()
         statemachine.pomodoro.active = false
         statemachine.add(statemachine.pomodoro.minutes, 'minutes')
@@ -302,6 +312,7 @@ bt_clear.onclick = function () {
         statemachine.restore()
         statemachine.clean()
     } else if (!(statemachine.state == 'stopped' && statemachine.value == 0 && !statemachine.pomodoro.active)) {
+        statemachine.clean()
         statemachine.backup()
         statemachine.clear()
     }
@@ -323,7 +334,8 @@ bt_minus.onclick = function () {
 bt_minus.setAttribute('data-long-press-delay', 1000);
 bt_minus.addEventListener('long-press', function (e) {
     e.preventDefault()
-
+    
+    statemachine.clean()
     statemachine.backup()
     statemachine.pomodoro.active = true
     statemachine.stop(moment.duration(-statemachine.pomodoro.minutes, 'minutes'))
