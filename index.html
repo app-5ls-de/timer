@@ -180,8 +180,14 @@
             <div class="buttons">
                 <button class="left" id="minus">-1</button>
                 <div class="button-group">
-                    <button class="first" id="toggle">start</button>
-                    <button class="last" id="clear">clear</button>
+                    <button class="first" id="toggle">
+                        <div id="inner-start">start</div>
+                        <div style="display: none;" id="inner-stop">stop</div>
+                    </button>
+                    <button class="last" id="clear">
+                        <div id="inner-clear">clear</div>
+                        <div style="display: none;" id="inner-back">back</div>
+                    </button>
                 </div>
                 <button class="right" id="plus">+1</button>
             </div>

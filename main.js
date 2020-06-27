@@ -13,7 +13,11 @@ moment.locale('de')
 
 var h1_time = document.getElementsByTagName('time')[0]
 var bt_toggle = document.getElementById('toggle')
+var inner_start = document.getElementById('inner-start')
+var inner_stop = document.getElementById('inner-stop')
 var bt_clear = document.getElementById('clear')
+var inner_clear = document.getElementById('inner-clear')
+var inner_back = document.getElementById('inner-back')
 var bt_plus = document.getElementById('plus')
 var bt_minus = document.getElementById('minus')
 var bt_pomodoroinfo = document.getElementById('pomodoro-info')
@@ -39,16 +43,6 @@ var displayed = {
 
 var timer, longpressed
 
-var buttontext = {
-    'bt_toggle': {
-        'start': 'start',
-        'stop': 'stop'
-    },
-    'bt_clear': {
-        '0': 'clear',
-        '1': 'back'
-    }
-}
 
 function isobject(obj) {
     return !!(obj && typeof obj === 'object' && Object.keys(obj).length > 0) //return a Boolean 
@@ -114,29 +108,32 @@ State.prototype.clear = function () {
 
 State.prototype.backup = function () {
     window.localStorage.oldState = this.tostring()
-    bt_clear.innerHTML = buttontext.bt_clear[1]
+    inner_back.style.display = "unset"
+    inner_clear.style.display = "none"
 }
 
 
 State.prototype.restore = function () {
     if (isobject(parse(window.localStorage.oldState))) {
         statemachine.loadState(parse(window.localStorage.oldState))
-        bt_clear.innerHTML = buttontext.bt_clear[0]
+        inner_back.style.display = "none"
+        inner_clear.style.display = "unset"
     }
 }
 
 
 State.prototype.clean = function () {
     if (window.localStorage.oldState) {
-        bt_clear.innerHTML = buttontext.bt_clear[0]
+        inner_back.style.display = "none"
+        inner_clear.style.display = "unset"
         window.localStorage.oldState = '{}'
     }
     if (longpressed) {
         longpressed = undefined
     }
-    if (displayed.info){
+    if (displayed.info) {
         sp_info.style.display = 'none'
-        displayed.info=false
+        displayed.info = false
     }
 }
 
@@ -198,7 +195,8 @@ State.prototype.start = function (value) {
     }
     this.state = 'started'
     this.value = value
-    bt_toggle.innerText = buttontext.bt_toggle.stop
+    inner_start.style.display = "none"
+    inner_stop.style.display = "unset"
     this.saveState()
     this.updater.on()
 }
@@ -214,7 +212,8 @@ State.prototype.stop = function (value) {
     }
     this.state = 'stopped'
     this.value = value
-    bt_toggle.innerText = buttontext.bt_toggle.start
+    inner_stop.style.display = "none"
+    inner_start.style.display = "unset"
     this.saveState()
     this.updater.off()
 }
@@ -293,8 +292,10 @@ loadSettings(parse(window.localStorage.settings))
 
 
 
-if (isobject(parse(window.localStorage.oldState))){
+if (isobject(parse(window.localStorage.oldState))) {
     bt_clear.innerHTML = buttontext.bt_clear[1]
+    inner_clear.style.display = "none"
+    inner_back.style.display = "unset"
 }
 
 
@@ -348,7 +349,7 @@ bt_minus.onclick = function () {
 bt_minus.setAttribute('data-long-press-delay', 1000);
 bt_minus.addEventListener('long-press', function (e) {
     e.preventDefault()
-    
+
     statemachine.clean()
     statemachine.backup()
     statemachine.pomodoro.active = true
