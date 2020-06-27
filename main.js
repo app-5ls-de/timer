@@ -293,7 +293,6 @@ loadSettings(parse(window.localStorage.settings))
 
 
 if (isobject(parse(window.localStorage.oldState))) {
-    bt_clear.innerHTML = buttontext.bt_clear[1]
     inner_clear.style.display = "none"
     inner_back.style.display = "unset"
 }
