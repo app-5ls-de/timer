@@ -1,11 +1,12 @@
-const CACHE = "static-cache-v2.4.1";
+const CACHE = "static-cache-v3.0.0";
 const precacheFiles = [
   '/',
   '/main.js',
   '/index.html',
   '/manifest.json',
   '/favicon.ico',
-  '/moment.min.js',
+  '/dayjs-v1.8.28/dayjs.min.js',
+  '/dayjs-v1.8.28/duration.js',
   '/images/logo16px.png',
   '/images/logo24px.png',
   '/images/logo32px.png',

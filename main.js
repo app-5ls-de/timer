@@ -9,7 +9,8 @@
 // end of long-press-event
 
 
-moment.locale('de')
+dayjs.extend(dayjs_plugin_duration)
+dayjs.locale('de')
 
 var h1_time = document.getElementsByTagName('time')[0]
 var bt_toggle = document.getElementById('toggle')
@@ -58,7 +59,7 @@ function assert(condition, message) {
 
 function State() {
     this.state = 'stopped'
-    this.value = moment.duration(0)
+    this.value = dayjs.duration(0)
     this.pomodoro = {}
     this.pomodoro.active = false
     this.pomodoro.minutes = 25
@@ -71,13 +72,19 @@ State.prototype.loadState = function (options) {
             this.pomodoro = options.pomodoro
         }
         if (options.state == 'started') {
-            let value = moment(options.value)
+            let value = dayjs(options.value)
             if (value.isValid()) {
                 this.start(value)
             }
         } else if (options.state == 'stopped') {
-            let value = moment.duration(options.value)
-            if (moment.isDuration(value)) {
+            let value
+            if (options.value[0] == "-") {
+                let absolute = dayjs.duration(options.value.substring(1)).asMilliseconds()
+                value = dayjs.duration(-absolute)
+            } else {
+                value = dayjs.duration(options.value)
+            }
+            if (dayjs.isDuration(value)) {
                 this.stop(value)
             }
         }
@@ -91,9 +98,21 @@ State.prototype.saveState = function () {
 
 
 State.prototype.tostring = function () {
+    function toISOString(value) {
+        if (dayjs.isDuration(value)) {
+            if (value.asMilliseconds() < 0) {
+                return "-" + dayjs.duration(-value.asMilliseconds()).toISOString()
+            } else {
+                return value.toISOString()
+            }
+        } else {
+            return value.toISOString()
+        }
+    }
+
     return JSON.stringify({
         'state': this.state,
-        'value': this.value.toISOString(true),
+        'value': toISOString(this.value),
         'pomodoro': this.pomodoro
     })
 }
@@ -101,7 +120,7 @@ State.prototype.tostring = function () {
 
 State.prototype.clear = function () {
     this.pomodoro.active = false
-    this.stop(moment.duration(0))
+    this.stop(dayjs.duration(0))
     loadSettings(parse(window.localStorage.settings))
 }
 
@@ -152,13 +171,13 @@ State.prototype.add = function (number, unit) {
     assert(typeof unit === 'string')
     assert(typeof number === 'number')
 
-    let durationToAdd = moment.duration(number, unit)
-    assert(moment.isDuration(durationToAdd))
+    let durationToAdd = dayjs.duration(number, unit)
+    assert(dayjs.isDuration(durationToAdd))
 
     if (this.state == 'started') {
-        this.value = this.value.subtract(durationToAdd)
+        this.value = this.value.subtract(number, unit)
     } else if (this.state == 'stopped') {
-        this.value = this.value.add(durationToAdd)
+        this.value = this.value.add(number, unit)
     }
     this.display()
     this.saveState()
@@ -190,7 +209,7 @@ State.prototype.start = function (value) {
         if (this.state == 'started') {
             value = this.value
         } else if (this.state == 'stopped') {
-            value = moment().subtract(this.value)
+            value = dayjs().subtract(this.value.asMilliseconds(), 'millisecond')
         }
     }
     this.state = 'started'
@@ -205,7 +224,7 @@ State.prototype.start = function (value) {
 State.prototype.stop = function (value) {
     if (!value) {
         if (this.state == 'started') {
-            value = moment.duration(moment().diff(this.value))
+            value = dayjs.duration(dayjs().diff(this.value))
         } else if (this.state == 'stopped') {
             value = this.value
         }
@@ -222,7 +241,7 @@ State.prototype.stop = function (value) {
 State.prototype.display = function () {
     let duration
     if (this.state == 'started') {
-        duration = moment.duration(moment().diff(this.value))
+        duration = dayjs.duration(dayjs().diff(this.value))
     } else if (this.state == 'stopped') {
         duration = this.value
     }
@@ -231,14 +250,16 @@ State.prototype.display = function () {
         return (num ? (num > 9 ? num : "0" + num) : "00")
     }
 
+    let millis = duration.asMilliseconds()
+
 
     if (displayed.pomodoro) {
-        if (this.pomodoro.active == false || duration < 0) {
+        if (this.pomodoro.active == false || millis < 0) {
             bt_pomodoroinfo.style.display = 'none'
             displayed.pomodoro = false
         }
     } else {
-        if (this.pomodoro.active == true && duration > 0) {
+        if (this.pomodoro.active == true && millis > 0) {
             sp_pomodoroinfo.textContent = '+' + statemachine.pomodoro.minutes + 'min'
             bt_pomodoroinfo.style.display = 'unset'
             displayed.pomodoro = true
@@ -246,11 +267,11 @@ State.prototype.display = function () {
     }
 
     let textContent = ''
-    if (duration < 0) {
+    if (millis < 0) {
         textContent = '-'
-        duration = moment.duration(-duration + 999)//add one second because duration.seconds always roudns down
+        duration = dayjs.duration(-millis + 999)//add one second because duration.seconds always roudns down
     }
-    textContent += pretty(Math.floor(duration.asHours())) + ":" + pretty(duration.minutes()) + ":" + pretty(duration.seconds())
+    textContent += pretty(Math.floor(duration.asHours())) + ":" + pretty(Math.floor(duration.minutes())) + ":" + pretty(Math.floor(duration.seconds()))
     h1_time.textContent = textContent
 }
 
@@ -307,7 +328,7 @@ bt_pomodoroinfo.onclick = function () {
         statemachine.clean()
         statemachine.backup()
         statemachine.pomodoro.active = false
-        statemachine.add(statemachine.pomodoro.minutes, 'minutes')
+        statemachine.add(statemachine.pomodoro.minutes, 'minute')
     }
 }
 
@@ -318,7 +339,7 @@ bt_toggle.onclick = function () {
 
 bt_plus.onclick = function () {
     statemachine.clean()
-    statemachine.add(1, 'minutes')
+    statemachine.add(1, 'minute')
 }
 
 bt_clear.onclick = function () {
@@ -341,7 +362,7 @@ bt_clear.addEventListener('long-press', function (e) {
 bt_minus.onclick = function () {
     if ((!longpressed) || (new Date()).getTime() - longpressed > 1000) {
         statemachine.clean()
-        statemachine.add(-1, 'minutes')
+        statemachine.add(-1, 'minute')
     }
 }
 
@@ -352,7 +373,7 @@ bt_minus.addEventListener('long-press', function (e) {
     statemachine.clean()
     statemachine.backup()
     statemachine.pomodoro.active = true
-    statemachine.stop(moment.duration(-statemachine.pomodoro.minutes, 'minutes'))
+    statemachine.stop(dayjs.duration(-statemachine.pomodoro.minutes, 'minute'))
     longpressed = (new Date()).getTime()
 })
 
