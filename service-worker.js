@@ -1,4 +1,4 @@
-const CACHE = "static-cache-v3.0.1";
+const CACHE = "static-cache-v3.1.0";
 const precacheFiles = [
   '/',
   '/main.js',
@@ -7,6 +7,8 @@ const precacheFiles = [
   '/favicon.ico',
   '/dayjs-v1.8.28/dayjs.min.js',
   '/dayjs-v1.8.28/duration.js',
+  '/fonts/courier-prime-v1-latin-regular.woff2',
+  '/fonts/courier-prime-v1-latin-regular.woff',
   '/images/logo16px.png',
   '/images/logo24px.png',
   '/images/logo32px.png',

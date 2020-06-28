@@ -28,6 +28,16 @@
     <meta name="Description" content="Simple and minimal Timer">
     <title>Timer</title>
     <style>
+        /* courier-prime-regular - latin */
+        @font-face {
+            font-family: 'Courier Prime';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Courier Prime Regular'), local('CourierPrime-Regular'),
+                url('../fonts/courier-prime-v1-latin-regular.woff2') format('woff2'),
+                url('../fonts/courier-prime-v1-latin-regular.woff') format('woff');
+        }
+
         html,
         body {
             height: 100%;
@@ -61,7 +71,7 @@
             color: #fff;
             fill: #fff;
             text-align: center;
-            font-family: Monaco, "Andale Mono", Courier, "Courier New", monospace;
+            font-family: 'Courier Prime', "Courier New", Courier, monospace;
         }
 
         .timer {
