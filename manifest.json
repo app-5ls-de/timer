@@ -3,7 +3,7 @@
     "name" : "Timer",
     "scope" : "/",
     "display" : "fullscreen",
-    "start_url" : "/",
+    "start_url" : "/?ref=pwa",
     "short_name" : "Timer",
     "description" : "Simple and mininal Timer",
     "orientation" : "portrait-primary",
