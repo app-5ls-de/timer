@@ -324,6 +324,7 @@ if (isobject(parse(window.localStorage.oldState))) {
 
 
 bt_pomodoroinfo.onclick = function () {
+    plausible('Button', {props: {type: 'pomodoroInfo'}})
     if (statemachine.pomodoro.active) {
         statemachine.clean()
         statemachine.backup()
@@ -333,20 +334,24 @@ bt_pomodoroinfo.onclick = function () {
 }
 
 bt_toggle.onclick = function () {
+    plausible('Button', {props: {type: 'toggle'}})
     statemachine.clean()
     statemachine.toggle()
 }
 
 bt_plus.onclick = function () {
+    plausible('Button', {props: {type: 'plus'}})
     statemachine.clean()
     statemachine.add(1, 'minute')
 }
 
 bt_clear.onclick = function () {
     if (isobject(parse(window.localStorage.oldState))) {
+        plausible('Button', {props: {type: 'restore'}})
         statemachine.restore()
         statemachine.clean()
     } else if (!(statemachine.state == 'stopped' && statemachine.value == 0 && !statemachine.pomodoro.active)) {
+        plausible('Button', {props: {type: 'clear'}})
         statemachine.clean()
         statemachine.backup()
         statemachine.clear()
@@ -355,11 +360,13 @@ bt_clear.onclick = function () {
 
 /* bt_clear.setAttribute('data-long-press-delay', 1500); */
 bt_clear.addEventListener('long-press', function (e) {
+    plausible('Button', {props: {type: 'clearAll'}})
     e.preventDefault()
     statemachine.clearAll()
 })
 
 bt_minus.onclick = function () {
+    plausible('Button', {props: {type: 'minus'}})
     if ((!longpressed) || (new Date()).getTime() - longpressed > 1000) {
         statemachine.clean()
         statemachine.add(-1, 'minute')
@@ -368,6 +375,7 @@ bt_minus.onclick = function () {
 
 bt_minus.setAttribute('data-long-press-delay', 1000);
 bt_minus.addEventListener('long-press', function (e) {
+    plausible('Button', {props: {type: 'pomodoro'}})
     e.preventDefault()
 
     statemachine.clean()
