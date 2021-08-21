@@ -1,98 +1,179 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel='manifest' href='/manifest.json'>
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="Timer">
-    <link rel="apple-touch-icon" href="/images/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="57x57" href="/images/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="/images/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/images/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="/images/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="/images/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="/images/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/images/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/images/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/images/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
-    <meta name="msapplication-TileColor" content="#000">
-    <meta name="msapplication-TileImage" content="/images/ms-icon-144x144.png">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="Timer" />
+    <link rel="apple-touch-icon" href="/images/apple-icon-152x152.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="57x57"
+      href="/images/apple-icon-57x57.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="60x60"
+      href="/images/apple-icon-60x60.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="72x72"
+      href="/images/apple-icon-72x72.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="76x76"
+      href="/images/apple-icon-76x76.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="114x114"
+      href="/images/apple-icon-114x114.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="/images/apple-icon-120x120.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="144x144"
+      href="/images/apple-icon-144x144.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="/images/apple-icon-152x152.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/images/apple-icon-180x180.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/images/android-icon-192x192.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="/images/favicon-96x96.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/images/favicon-16x16.png"
+    />
+    <meta name="msapplication-TileColor" content="#000" />
+    <meta
+      name="msapplication-TileImage"
+      content="/images/ms-icon-144x144.png"
+    />
     <meta name="theme-color" content="#000" />
-    <meta name="Description" content="Simple and minimal Timer">
+    <meta name="Description" content="Simple and minimal Timer" />
     <title>Timer</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-	
-<body>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+
+  <body>
     <div class="main">
-        <div class="timer">
-            <span id="info"></span>
-            <button id="pomodoro-info">
-                <span></span>
-            </button>
-            <h1><time>00:00:00</time></h1>
-            <div class="buttons">
-                <button id="minus" title="minus">
-                    <svg viewBox="0 0 495 495">
-                        <rect y="227.5" width="495" height="40" />
-                    </svg>
-                </button>
-                <button id="toggle" title="toggle">
-                    <div id="inner-start" style="display: unset;">
-                        <svg viewBox="0 0 386.972 386.972">
-                            <path
-                                d="M25.99,0v386.972l334.991-193.486L25.99,0z M55.99,51.972l245.009,141.514L55.99,335V51.972z" />
-                        </svg>
-                    </div>
-                    <div id="inner-stop" style="display: none;">
-                        <svg viewBox="0 0 395 395">
-                            <path d="M73.75,395h102.5V0H73.75V395z M103.75,30h42.5v335h-42.5V30z" />
-                            <path d="M218.75,0v395h102.5V0H218.75z M291.25,365h-42.5V30h42.5V365z" />
-                        </svg>
-                    </div>
-                </button>
-                <button id="clear" title="clear">
-                    <div id="inner-clear" style="display: unset;">
-                        <svg viewBox="0 0 495 495">
-                            <polygon transform="rotate(45 247.5 247.5)" points=" 495,227.5 267.5,227.5 267.5,0
-                                    227.5,0 227.5,227.5 0,227.5 0,267.5 227.5,267.5 227.5,495 267.5,495 267.5,267.5
-                                    495,267.5 " />
-                        </svg>
-                    </div>
-                    <div id="inner-back" style="display: none;">
-                        <svg viewBox="0 0 486.975 486.975">
-                            <path d="M473.475,230.025h-427.4l116-116c5.3-5.3,5.3-13.8,0-19.1c-5.3-5.3-13.8-5.3-19.1,0l-139,139c-5.3,5.3-5.3,13.8,0,19.1
-		l139,139c2.6,2.6,6.1,4,9.5,4s6.9-1.3,9.5-4c5.3-5.3,5.3-13.8,0-19.1l-116-116h427.5c7.5,0,13.5-6,13.5-13.5
-        S480.975,230.025,473.475,230.025z" />
-                        </svg>
-                    </div>
-                </button>
-                <button id="plus" title="plus">
-                    <svg viewBox="0 0 495 495">
-                        <polygon points="495,227.5 267.5,227.5 267.5,0 227.5,0 227.5,227.5 0,227.5 0,267.5 227.5,267.5 227.5,495 
-                   267.5,495 267.5,267.5 495,267.5 " />
-                    </svg>
-                </button>
+      <div class="timer">
+        <span id="info"></span>
+        <button id="pomodoro-info">
+          <span></span>
+        </button>
+        <h1><time>00:00:00</time></h1>
+        <div class="buttons">
+          <button id="minus" title="minus">
+            <svg viewBox="0 0 495 495">
+              <rect y="227.5" width="495" height="40" />
+            </svg>
+          </button>
+          <button id="toggle" title="toggle">
+            <div id="inner-start" style="display: unset">
+              <svg viewBox="0 0 386.972 386.972">
+                <path
+                  d="M25.99,0v386.972l334.991-193.486L25.99,0z M55.99,51.972l245.009,141.514L55.99,335V51.972z"
+                />
+              </svg>
             </div>
+            <div id="inner-stop" style="display: none">
+              <svg viewBox="0 0 395 395">
+                <path
+                  d="M73.75,395h102.5V0H73.75V395z M103.75,30h42.5v335h-42.5V30z"
+                />
+                <path
+                  d="M218.75,0v395h102.5V0H218.75z M291.25,365h-42.5V30h42.5V365z"
+                />
+              </svg>
+            </div>
+          </button>
+          <button id="clear" title="clear">
+            <div id="inner-clear" style="display: unset">
+              <svg viewBox="0 0 495 495">
+                <polygon
+                  transform="rotate(45 247.5 247.5)"
+                  points=" 495,227.5 267.5,227.5 267.5,0
+                                    227.5,0 227.5,227.5 0,227.5 0,267.5 227.5,267.5 227.5,495 267.5,495 267.5,267.5
+                                    495,267.5 "
+                />
+              </svg>
+            </div>
+            <div id="inner-back" style="display: none">
+              <svg viewBox="0 0 486.975 486.975">
+                <path
+                  d="M473.475,230.025h-427.4l116-116c5.3-5.3,5.3-13.8,0-19.1c-5.3-5.3-13.8-5.3-19.1,0l-139,139c-5.3,5.3-5.3,13.8,0,19.1
+		l139,139c2.6,2.6,6.1,4,9.5,4s6.9-1.3,9.5-4c5.3-5.3,5.3-13.8,0-19.1l-116-116h427.5c7.5,0,13.5-6,13.5-13.5
+        S480.975,230.025,473.475,230.025z"
+                />
+              </svg>
+            </div>
+          </button>
+          <button id="plus" title="plus">
+            <svg viewBox="0 0 495 495">
+              <polygon
+                points="495,227.5 267.5,227.5 267.5,0 227.5,0 227.5,227.5 0,227.5 0,267.5 227.5,267.5 227.5,495 
+                   267.5,495 267.5,267.5 495,267.5 "
+              />
+            </svg>
+          </button>
         </div>
+      </div>
     </div>
 
-    <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/dayjs@1.10.6/dayjs.min.js"></script>
-    <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/dayjs@1.10.6/plugin/duration.js"></script>
-    <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/long-press-event@2.4.4/dist/long-press-event.min.js"></script>
+    <script
+      crossorigin="anonymous"
+      src="https://cdn.jsdelivr.net/npm/dayjs@1.10.6/dayjs.min.js"
+    ></script>
+    <script
+      crossorigin="anonymous"
+      src="https://cdn.jsdelivr.net/npm/dayjs@1.10.6/plugin/duration.js"
+    ></script>
+    <script
+      crossorigin="anonymous"
+      src="https://cdn.jsdelivr.net/npm/long-press-event@2.4.4/dist/long-press-event.min.js"
+    ></script>
     <script src="/script.js"></script>
     <script>
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("/service-worker.js");
-        }
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/service-worker.js");
+      }
     </script>
-</body>
-
+  </body>
 </html>
