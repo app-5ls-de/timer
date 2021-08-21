@@ -27,148 +27,7 @@
     <meta name="theme-color" content="#000" />
     <meta name="Description" content="Simple and minimal Timer">
     <title>Timer</title>
-    <style>
-        /* courier-prime-regular - latin */
-        @font-face {
-            font-family: 'Courier Prime';
-            font-style: normal;
-            font-weight: 400;
-            src: local('Courier Prime Regular'), local('CourierPrime-Regular'),
-                url('../fonts/courier-prime-v1-latin-regular.woff2') format('woff2'),
-                url('../fonts/courier-prime-v1-latin-regular.woff') format('woff');
-            font-display: swap;
-        }
-
-        html,
-        body {
-            height: 100%;
-            margin: 0px;
-            padding: 0px;
-            touch-action: manipulation;
-            -webkit-touch-callout: none;
-            /* iOS Safari */
-            -webkit-user-select: none;
-            /* Safari */
-            -khtml-user-select: none;
-            /* Konqueror HTML */
-            -moz-user-select: none;
-            /* Old versions of Firefox */
-            -ms-user-select: none;
-            /* Internet Explorer/Edge */
-            user-select: none;
-            /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
-        }
-
-        .main {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        body {
-            background-color: #000;
-            position: relative;
-            color: #fff;
-            fill: #fff;
-            text-align: center;
-            font-family: 'Courier Prime', "Courier New", Courier, monospace;
-        }
-
-        .timer {
-            display: flex;
-            flex-direction: column;
-        }
-
-        time {
-            font-size: 2.5rem;
-            font-weight: 500;
-            line-height: 1.2;
-        }
-
-        h1 {
-            margin-top: 0;
-            margin-bottom: .5rem;
-        }
-
-        .buttons {
-            position: relative;
-            vertical-align: middle;
-            display: flex;
-            width: 100%;
-            justify-content: space-between;
-        }
-
-        button {
-            color: #fff;
-            background-color: #343a40;
-            border-color: #343a40;
-            cursor: pointer;
-            border: 1px solid transparent;
-            padding: .375rem .75rem;
-            font-size: 1rem;
-            line-height: 1.5;
-            border-radius: .25rem;
-            transition: color .15s;
-            -webkit-appearance: button;
-            text-transform: none;
-            text-align: center;
-            vertical-align: middle;
-            padding: 0;
-            height: fit-content;
-            width: fit-content;
-            background-color: transparent;
-        }
-
-        button:active {
-            z-index: 1;
-            color: #fff;
-            background-color: #1d2124;
-            border-color: #171a1d;
-        }
-
-        @media (hover: hover) {
-            button:hover {
-                z-index: 1;
-                color: #fff;
-                background-color: #23272b;
-                border-color: #1d2124;
-                text-decoration: none;
-            }
-        }
-
-        button svg {
-            height: 2rem;
-
-            max-width: 70%;
-            max-height: 70%;
-            margin: 15%;
-        }
-
-        button:focus {
-            z-index: 1;
-            box-shadow: 0 0 0 0.2rem rgba(82, 88, 93, .5);
-            outline: 0;
-        }
-
-        button#pomodoro-info {
-            height: fit-content;
-            width: fit-content;
-            background: transparent;
-            margin: 0 auto;
-            padding: 0.5rem;
-        }
-
-        span#info,
-        button#pomodoro-info>span {
-            color: gray;
-        }
-
-        span#info,
-        button#pomodoro-info {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="/style.css">
 </head>
 	
 <body>
@@ -227,7 +86,7 @@
 
     <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/dayjs@1.10.6/dayjs.min.js"></script>
     <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/dayjs@1.10.6/plugin/duration.js"></script>
-    <script src="/main.js"></script>
+    <script src="/script.js"></script>
     <script>
         if ("serviceWorker" in navigator) {
             navigator.serviceWorker.register("/service-worker.js");
