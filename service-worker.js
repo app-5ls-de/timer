@@ -22,13 +22,11 @@ registerRoute(
 self.addEventListener("install", (event) => {
   const urls = [
     "/",
-    "/main.js",
-    "/index.html",
-    "/manifest.json",
-    "/fonts/courier-prime-v1-latin-regular.woff",
-    "/fonts/courier-prime-v1-latin-regular.woff2",
+    "/script.js",
+    "/style.css",
     "https://cdn.jsdelivr.net/npm/dayjs@1.10.6/dayjs.min.js",
     "https://cdn.jsdelivr.net/npm/dayjs@1.10.6/plugin/duration.js",
+    "https://cdn.jsdelivr.net/npm/long-press-event@2.4.4/dist/long-press-event.min.js",
   ];
   const cacheName = cacheNames.runtime;
   event.waitUntil(caches.open(cacheName).then((cache) => cache.addAll(urls)));
