@@ -29,7 +29,7 @@ var displayed = {
   info: false,
 };
 
-var timer, longpressed;
+var updater_interval, longpressed;
 
 function isobject(obj) {
   return !!(obj && typeof obj === "object" && Object.keys(obj).length > 0); //return a Boolean
@@ -41,233 +41,230 @@ function assert(condition, message) {
   }
 }
 
-//#region State
+class State {
+  constructor() {
+    this.state = "stopped";
+    this.value = dayjs.duration(0);
+    this.pomodoro = {};
+    this.pomodoro.active = false;
+    this.pomodoro.minutes = 25;
+  }
 
-function State() {
-  this.state = "stopped";
-  this.value = dayjs.duration(0);
-  this.pomodoro = {};
-  this.pomodoro.active = false;
-  this.pomodoro.minutes = 25;
-}
-
-State.prototype.loadState = function (options) {
-  if (isobject(options)) {
-    if (options.pomodoro) {
-      this.pomodoro = options.pomodoro;
-    }
-    if (options.state == "started") {
-      let value = dayjs(options.value);
-      if (value.isValid()) {
-        this.start(value);
+  loadState(options) {
+    if (isobject(options)) {
+      if (options.pomodoro) {
+        this.pomodoro = options.pomodoro;
       }
-    } else if (options.state == "stopped") {
-      let value;
-      if (options.value[0] == "-") {
-        let absolute = dayjs
-          .duration(options.value.substring(1))
-          .asMilliseconds();
-        value = dayjs.duration(-absolute);
-      } else {
-        value = dayjs.duration(options.value);
-      }
-      if (dayjs.isDuration(value)) {
-        this.stop(value);
+      if (options.state == "started") {
+        let value = dayjs(options.value);
+        if (value.isValid()) {
+          this.start(value);
+        }
+      } else if (options.state == "stopped") {
+        let value;
+        if (options.value[0] == "-") {
+          let absolute = dayjs
+            .duration(options.value.substring(1))
+            .asMilliseconds();
+          value = dayjs.duration(-absolute);
+        } else {
+          value = dayjs.duration(options.value);
+        }
+        if (dayjs.isDuration(value)) {
+          this.stop(value);
+        }
       }
     }
   }
-};
 
-State.prototype.saveState = function () {
-  window.localStorage.state = this.tostring();
-};
+  saveState() {
+    window.localStorage.state = this.tostring();
+  }
 
-State.prototype.tostring = function () {
-  function toISOString(value) {
-    if (dayjs.isDuration(value)) {
-      if (value.asMilliseconds() < 0) {
-        return "-" + dayjs.duration(-value.asMilliseconds()).toISOString();
+  tostring() {
+    function toISOString(value) {
+      if (dayjs.isDuration(value)) {
+        if (value.asMilliseconds() < 0) {
+          return "-" + dayjs.duration(-value.asMilliseconds()).toISOString();
+        } else {
+          return value.toISOString();
+        }
       } else {
         return value.toISOString();
       }
-    } else {
-      return value.toISOString();
+    }
+
+    return JSON.stringify({
+      state: this.state,
+      value: toISOString(this.value),
+      pomodoro: this.pomodoro,
+    });
+  }
+
+  clear() {
+    this.pomodoro.active = false;
+    this.stop(dayjs.duration(0));
+    loadSettings(parse(window.localStorage.settings));
+  }
+
+  backup() {
+    window.localStorage.oldState = this.tostring();
+    inner_back.style.display = "unset";
+    inner_clear.style.display = "none";
+  }
+
+  restore() {
+    if (isobject(parse(window.localStorage.oldState))) {
+      statemachine.loadState(parse(window.localStorage.oldState));
+      inner_back.style.display = "none";
+      inner_clear.style.display = "unset";
     }
   }
 
-  return JSON.stringify({
-    state: this.state,
-    value: toISOString(this.value),
-    pomodoro: this.pomodoro,
-  });
-};
-
-State.prototype.clear = function () {
-  this.pomodoro.active = false;
-  this.stop(dayjs.duration(0));
-  loadSettings(parse(window.localStorage.settings));
-};
-
-State.prototype.backup = function () {
-  window.localStorage.oldState = this.tostring();
-  inner_back.style.display = "unset";
-  inner_clear.style.display = "none";
-};
-
-State.prototype.restore = function () {
-  if (isobject(parse(window.localStorage.oldState))) {
-    statemachine.loadState(parse(window.localStorage.oldState));
-    inner_back.style.display = "none";
-    inner_clear.style.display = "unset";
+  clean() {
+    if (window.localStorage.oldState) {
+      inner_back.style.display = "none";
+      inner_clear.style.display = "unset";
+      window.localStorage.oldState = "{}";
+    }
+    if (longpressed) {
+      longpressed = undefined;
+    }
+    if (displayed.info) {
+      sp_info.style.display = "none";
+      displayed.info = false;
+    }
   }
-};
 
-State.prototype.clean = function () {
-  if (window.localStorage.oldState) {
-    inner_back.style.display = "none";
-    inner_clear.style.display = "unset";
-    window.localStorage.oldState = "{}";
+  toggle() {
+    if (this.state == "started") {
+      this.stop();
+    } else if (this.state == "stopped") {
+      this.start();
+    }
   }
-  if (longpressed) {
-    longpressed = undefined;
+
+  add(number, unit) {
+    unit = unit || "";
+    assert(typeof unit === "string");
+    assert(typeof number === "number");
+
+    let durationToAdd = dayjs.duration(number, unit);
+    assert(dayjs.isDuration(durationToAdd));
+
+    if (this.state == "started") {
+      this.value = this.value.subtract(number, unit);
+    } else if (this.state == "stopped") {
+      this.value = this.value.add(number, unit);
+    }
+    this.display();
+    this.saveState();
   }
-  if (displayed.info) {
-    sp_info.style.display = "none";
-    displayed.info = false;
-  }
-};
 
-State.prototype.toggle = function () {
-  if (this.state == "started") {
-    this.stop();
-  } else if (this.state == "stopped") {
-    this.start();
-  }
-};
-
-State.prototype.add = function (number, unit) {
-  unit = unit || "";
-  assert(typeof unit === "string");
-  assert(typeof number === "number");
-
-  let durationToAdd = dayjs.duration(number, unit);
-  assert(dayjs.isDuration(durationToAdd));
-
-  if (this.state == "started") {
-    this.value = this.value.subtract(number, unit);
-  } else if (this.state == "stopped") {
-    this.value = this.value.add(number, unit);
-  }
-  this.display();
-  this.saveState();
-};
-
-State.prototype.updater = {};
-
-State.prototype.updater.on = function () {
-  statemachine.display();
-  if (timer) {
-    statemachine.updater.off();
-  }
-  timer = setInterval(function () {
+  updater_start = function () {
     statemachine.display();
-  }, 1000);
-};
+    if (updater_interval) {
+      statemachine.updater_stop();
+    }
+    updater_interval = setInterval(function () {
+      statemachine.display();
+    }, 1000);
+  };
 
-State.prototype.updater.off = function () {
-  statemachine.display();
-  if (timer) {
-    clearInterval(timer);
-    timer = undefined;
+  updater_stop = function () {
+    statemachine.display();
+    if (updater_interval) {
+      clearInterval(updater_interval);
+      updater_interval = undefined;
+    }
+  };
+
+  start(value) {
+    if (!value) {
+      if (this.state == "started") {
+        value = this.value;
+      } else if (this.state == "stopped") {
+        value = dayjs().subtract(this.value.asMilliseconds(), "millisecond");
+      }
+    }
+    this.state = "started";
+    this.value = value;
+    inner_start.style.display = "none";
+    inner_stop.style.display = "unset";
+    this.saveState();
+    this.updater_start();
   }
-};
 
-State.prototype.start = function (value) {
-  if (!value) {
+  stop(value) {
+    if (!value) {
+      if (this.state == "started") {
+        value = dayjs.duration(dayjs().diff(this.value));
+      } else if (this.state == "stopped") {
+        value = this.value;
+      }
+    }
+    this.state = "stopped";
+    this.value = value;
+    inner_stop.style.display = "none";
+    inner_start.style.display = "unset";
+    this.saveState();
+    this.updater_stop();
+  }
+
+  display() {
+    let duration;
     if (this.state == "started") {
-      value = this.value;
+      duration = dayjs.duration(dayjs().diff(this.value));
     } else if (this.state == "stopped") {
-      value = dayjs().subtract(this.value.asMilliseconds(), "millisecond");
+      duration = this.value;
     }
-  }
-  this.state = "started";
-  this.value = value;
-  inner_start.style.display = "none";
-  inner_stop.style.display = "unset";
-  this.saveState();
-  this.updater.on();
-};
 
-State.prototype.stop = function (value) {
-  if (!value) {
-    if (this.state == "started") {
-      value = dayjs.duration(dayjs().diff(this.value));
-    } else if (this.state == "stopped") {
-      value = this.value;
+    function pretty(num) {
+      return num ? (num > 9 ? num : "0" + num) : "00";
     }
-  }
-  this.state = "stopped";
-  this.value = value;
-  inner_stop.style.display = "none";
-  inner_start.style.display = "unset";
-  this.saveState();
-  this.updater.off();
-};
 
-State.prototype.display = function () {
-  let duration;
-  if (this.state == "started") {
-    duration = dayjs.duration(dayjs().diff(this.value));
-  } else if (this.state == "stopped") {
-    duration = this.value;
-  }
+    let millis = duration.asMilliseconds();
 
-  function pretty(num) {
-    return num ? (num > 9 ? num : "0" + num) : "00";
-  }
-
-  let millis = duration.asMilliseconds();
-
-  if (displayed.pomodoro) {
-    if (this.pomodoro.active == false || millis < 0) {
-      bt_pomodoroinfo.style.display = "none";
-      displayed.pomodoro = false;
+    if (displayed.pomodoro) {
+      if (this.pomodoro.active == false || millis < 0) {
+        bt_pomodoroinfo.style.display = "none";
+        displayed.pomodoro = false;
+      }
+    } else {
+      if (this.pomodoro.active == true && millis > 0) {
+        sp_pomodoroinfo.textContent =
+          "+" + statemachine.pomodoro.minutes + "min";
+        bt_pomodoroinfo.style.display = "unset";
+        displayed.pomodoro = true;
+      }
     }
-  } else {
-    if (this.pomodoro.active == true && millis > 0) {
-      sp_pomodoroinfo.textContent = "+" + statemachine.pomodoro.minutes + "min";
-      bt_pomodoroinfo.style.display = "unset";
-      displayed.pomodoro = true;
+
+    let textContent = "";
+    if (millis < 0) {
+      textContent = "-";
+      duration = dayjs.duration(-millis + 999); //add one second because duration.seconds always roudns down
     }
+    textContent +=
+      pretty(Math.floor(duration.asHours())) +
+      ":" +
+      pretty(Math.floor(duration.minutes())) +
+      ":" +
+      pretty(Math.floor(duration.seconds()));
+    h1_time.textContent = textContent;
   }
 
-  let textContent = "";
-  if (millis < 0) {
-    textContent = "-";
-    duration = dayjs.duration(-millis + 999); //add one second because duration.seconds always roudns down
+  clearAll() {
+    this.clean();
+    this.clear();
+    sp_info.textContent = "Cleared";
+    sp_info.style.display = "unset";
+    displayed.info = true;
+
+    window.localStorage.oldState = "{}";
+    window.localStorage.state = "{}";
+    window.localStorage.settings = "{}";
   }
-  textContent +=
-    pretty(Math.floor(duration.asHours())) +
-    ":" +
-    pretty(Math.floor(duration.minutes())) +
-    ":" +
-    pretty(Math.floor(duration.seconds()));
-  h1_time.textContent = textContent;
-};
-
-State.prototype.clearAll = function () {
-  this.clean();
-  this.clear();
-  sp_info.textContent = "Cleared";
-  sp_info.style.display = "unset";
-  displayed.info = true;
-
-  window.localStorage.oldState = "{}";
-  window.localStorage.state = "{}";
-  window.localStorage.settings = "{}";
-};
-
-//#endregion
+}
 
 var loadSettings = function (options) {
   if (isobject(options)) {
