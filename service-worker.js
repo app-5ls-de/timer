@@ -3,11 +3,9 @@ importScripts(
 );
 const { registerRoute, setDefaultHandler } = workbox.routing;
 const { StaleWhileRevalidate, CacheFirst } = workbox.strategies;
-const { setCacheNameDetails } = workbox.core;
+const { cacheNames, setCacheNameDetails } = workbox.core;
 
-setCacheNameDetails({
-  suffix: "v1",
-});
+setCacheNameDetails({ suffix: "v1" });
 
 registerRoute(
   ({ url }) => url.origin == location.origin,
