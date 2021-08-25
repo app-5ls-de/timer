@@ -266,20 +266,20 @@ class State {
   }
 }
 
-var loadSettings = function (options) {
+function loadSettings(options) {
   if (isobject(options)) {
     if (!statemachine.pomodoro.active) {
       statemachine.pomodoro.minutes = options.pomodorominutes;
       statemachine.saveState();
     }
   }
-};
+}
 
-var parse = function (string) {
+function parse(string) {
   if (string) {
     return JSON.parse(string);
   }
-};
+}
 
 var statemachine = new State();
 statemachine.loadState(parse(window.localStorage.state));
@@ -290,26 +290,26 @@ if (isobject(parse(window.localStorage.oldState))) {
   inner_back.style.display = "unset";
 }
 
-bt_pomodoroinfo.onclick = function () {
+bt_pomodoroinfo.addEventListener("click", () => {
   if (statemachine.pomodoro.active) {
     statemachine.clean();
     statemachine.backup();
     statemachine.pomodoro.active = false;
     statemachine.add(statemachine.pomodoro.minutes, "minute");
   }
-};
+});
 
-bt_toggle.onclick = function () {
+bt_toggle.addEventListener("click", () => {
   statemachine.clean();
   statemachine.toggle();
-};
+});
 
-bt_plus.onclick = function () {
+bt_plus.addEventListener("click", () => {
   statemachine.clean();
   statemachine.add(1, "minute");
-};
+});
 
-bt_clear.onclick = function () {
+bt_clear.addEventListener("click", () => {
   if (isobject(parse(window.localStorage.oldState))) {
     statemachine.restore();
     statemachine.clean();
@@ -324,20 +324,19 @@ bt_clear.onclick = function () {
     statemachine.backup();
     statemachine.clear();
   }
-};
+});
 
-/* bt_clear.setAttribute('data-long-press-delay', 1500); */
 bt_clear.addEventListener("long-press", function (e) {
   e.preventDefault();
   statemachine.clearAll();
 });
 
-bt_minus.onclick = function () {
+bt_minus.addEventListener("click", () => {
   if (!longpressed || new Date().getTime() - longpressed > 1000) {
     statemachine.clean();
     statemachine.add(-1, "minute");
   }
-};
+});
 
 bt_minus.setAttribute("data-long-press-delay", 1000);
 bt_minus.addEventListener("long-press", function (e) {
@@ -350,18 +349,10 @@ bt_minus.addEventListener("long-press", function (e) {
   longpressed = new Date().getTime();
 });
 
-bt_minus.onmouseup = function () {
-  this.blur();
-};
-bt_plus.onmouseup = function () {
-  this.blur();
-};
-bt_toggle.onmouseup = function () {
-  this.blur();
-};
-bt_clear.onmouseup = function () {
-  this.blur();
-};
-bt_pomodoroinfo.onmouseup = function () {
-  this.blur();
-};
+[bt_minus, bt_toggle, bt_clear, bt_plus, bt_pomodoroinfo].forEach(
+  (dom_element) => {
+    dom_element.addEventListener("mouseup", () => {
+      this.blur();
+    });
+  }
+);
