@@ -149,6 +149,7 @@ class State {
     assert(typeof unit === "string");
     assert(typeof number === "number");
 
+    this.was_negative = false;
     let durationToAdd = dayjs.duration(number, unit);
     assert(dayjs.isDuration(durationToAdd));
 
@@ -225,6 +226,10 @@ class State {
 
     let millis = duration.asMilliseconds();
 
+    if (millis > 0 && this.was_negative && this.state == "started") {
+      this.show_notification();
+    }
+
     if (displayed.pomodoro) {
       if (this.pomodoro.active == false || millis < 0) {
         bt_pomodoroinfo.style.display = "none";
@@ -251,6 +256,24 @@ class State {
       ":" +
       pretty(Math.floor(duration.seconds()));
     h1_time.textContent = textContent;
+
+    this.was_negative = millis < 0;
+  }
+
+  show_notification() {
+    if ("Notification" in window && Notification.permission !== "denied") {
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          navigator.serviceWorker.ready.then((registration) => {
+            registration.showNotification("Timer abgelaufen", {
+              badge: "/images/logo64px.png",
+              tag: "Timer abgelaufen",
+              timestamp: new Date(),
+            });
+          });
+        }
+      });
+    }
   }
 
   clearAll() {
@@ -356,3 +379,21 @@ bt_minus.addEventListener("long-press", function (e) {
     });
   }
 );
+
+const modal = document.querySelector(".modal");
+const trigger = document.querySelector(".trigger");
+const closeButton = document.querySelector(".close-button");
+
+function toggleModal() {
+  modal.classList.toggle("show-modal");
+}
+
+function windowOnClick(event) {
+  if (event.target === modal) {
+    toggleModal();
+  }
+}
+
+trigger.addEventListener("click", toggleModal);
+closeButton.addEventListener("click", toggleModal);
+modal.addEventListener("click", windowOnClick);

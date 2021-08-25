@@ -43,3 +43,20 @@ self.addEventListener("activate", (event) => {
     )
   );
 });
+
+self.addEventListener("notificationclick", (event) => {
+  event.waitUntil(
+    self.clients.matchAll().then((clients) => {
+      event.notification.close();
+      if (clients.length) {
+        // check if at least one tab is already open
+        let client = clients[0];
+        if ("focus" in client) {
+          client.focus();
+        }
+      } else {
+        self.clients.openWindow("/");
+      }
+    })
+  );
+});
