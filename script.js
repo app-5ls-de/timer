@@ -205,6 +205,7 @@ class State {
       }
     }
     this.state = "stopped";
+    document.title = "Timer";
     this.value = value;
     inner_stop.style.display = "none";
     inner_start.style.display = "unset";
@@ -257,6 +258,9 @@ class State {
       if (millis > 0 && millis < 5000 && this.was_negative) {
         this.show_notification();
       }
+      if (duration.seconds() % 5 == 0) {
+        document.title = "Timer: " + textContent;
+      }
     }
 
     this.was_negative = millis < 0;
@@ -284,6 +288,7 @@ class State {
     sp_info.textContent = "Cleared";
     sp_info.style.display = "unset";
     displayed.info = true;
+    document.title = "Timer";
 
     window.localStorage.oldState = "{}";
     window.localStorage.state = "{}";
