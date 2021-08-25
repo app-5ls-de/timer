@@ -377,6 +377,10 @@ bt_minus.addEventListener("long-press", function (e) {
   statemachine.pomodoro.active = true;
   statemachine.stop(dayjs.duration(-statemachine.pomodoro.minutes, "minute"));
   longpressed = new Date().getTime();
+
+  if ("Notification" in window && Notification.permission !== "denied") {
+    Notification.requestPermission();
+  }
 });
 
 [bt_minus, bt_toggle, bt_clear, bt_plus, bt_pomodoroinfo].forEach(
