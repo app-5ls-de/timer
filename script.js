@@ -386,7 +386,7 @@ bt_minus.addEventListener("long-press", function (e) {
 [bt_minus, bt_toggle, bt_clear, bt_plus, bt_pomodoroinfo].forEach(
   (dom_element) => {
     dom_element.addEventListener("mouseup", () => {
-      this.blur();
+      dom_element.blur();
     });
   }
 );
