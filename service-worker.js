@@ -47,7 +47,7 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("notificationclick", (event) => {
   event.waitUntil(
     self.clients.matchAll().then((clients) => {
-      event.notification.close();
+      //event.notification.close();
       if (clients.length) {
         // check if at least one tab is already open
         let client = clients[0];
