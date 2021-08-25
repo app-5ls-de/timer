@@ -226,10 +226,6 @@ class State {
 
     let millis = duration.asMilliseconds();
 
-    if (millis > 0 && this.was_negative && this.state == "started") {
-      this.show_notification();
-    }
-
     if (displayed.pomodoro) {
       if (this.pomodoro.active == false || millis < 0) {
         bt_pomodoroinfo.style.display = "none";
@@ -256,6 +252,12 @@ class State {
       ":" +
       pretty(Math.floor(duration.seconds()));
     h1_time.textContent = textContent;
+
+    if (this.state == "started") {
+      if (millis > 0 && millis < 5000 && this.was_negative) {
+        this.show_notification();
+      }
+    }
 
     this.was_negative = millis < 0;
   }
