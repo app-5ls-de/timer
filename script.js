@@ -12,6 +12,9 @@ var bt_plus = document.getElementById("plus");
 var bt_minus = document.getElementById("minus");
 var sp_info = document.getElementById("info");
 
+
+var audio = new Audio('/gong.mp3');
+
 if (window.localStorage.oldState == undefined) {
   window.localStorage.oldState = "{}";
 }
@@ -200,6 +203,9 @@ class State {
     inner_start.style.display = "unset";
     this.saveState();
     this.updater_stop();
+
+    audio.pause();
+    audio.currentTime = 0;
   }
 
   display() {
@@ -232,6 +238,7 @@ class State {
     if (this.state == "started") {
       if (millis > 0 && millis < 5000 && this.was_negative) {
         this.show_notification();
+        audio.play();
       }
       if (duration.seconds() % 5 == 0) {
         document.title = "Timer: " + textContent;
@@ -331,6 +338,8 @@ bt_minus.addEventListener("click", () => {
     statemachine.clean();
     statemachine.add(-1, "minute");
   }
+  audio.pause();
+  audio.currentTime = 0;
 });
 
 bt_minus.setAttribute("data-long-press-delay", 1000);
