@@ -19,7 +19,7 @@ let wakeLock = null;
 const requestWakeLock = async () => {
   try {
     if ("wakeLock" in window ) {
-    wakeLock = await navigator.wakeLock.request();
+      wakeLock = await navigator.wakeLock.request();
     }
   } catch (err) {
     console.error(err.name+", "+err.message);
@@ -42,9 +42,6 @@ if (window.localStorage.oldState == undefined) {
 }
 if (window.localStorage.state == undefined) {
   window.localStorage.state = "{}";
-}
-if (window.localStorage.settings == undefined) {
-  window.localStorage.settings = "{}";
 }
 
 var displayed = {
@@ -118,7 +115,6 @@ class State {
 
   clear() {
     this.stop(dayjs.duration(0));
-    loadSettings(parse(window.localStorage.settings));
   }
 
   backup() {
@@ -140,9 +136,6 @@ class State {
       inner_back.style.display = "none";
       inner_clear.style.display = "unset";
       window.localStorage.oldState = "{}";
-    }
-    if (longpressed) {
-      longpressed = undefined;
     }
     if (displayed.info) {
       sp_info.style.display = "none";
@@ -301,15 +294,6 @@ class State {
 
     window.localStorage.oldState = "{}";
     window.localStorage.state = "{}";
-    window.localStorage.settings = "{}";
-  }
-}
-
-function loadSettings(options) {
-  if (isobject(options)) {
-    
-      statemachine.saveState();
-    
   }
 }
 
@@ -321,7 +305,6 @@ function parse(string) {
 
 var statemachine = new State();
 statemachine.loadState(parse(window.localStorage.state));
-loadSettings(parse(window.localStorage.settings));
 
 if (isobject(parse(window.localStorage.oldState))) {
   inner_clear.style.display = "none";
