@@ -7,7 +7,7 @@ const { cacheNames, setCacheNameDetails } = workbox.core;
 
 setCacheNameDetails({ suffix: "v2" });
 
-registerRoute(new RegExp("\\.(json|svg|png|woff2?)$"), new CacheFirst());
+registerRoute(new RegExp("\\.(json|svg|png|mp3|woff2?)$"), new CacheFirst());
 
 registerRoute(
   ({ url }) => url.origin == location.origin,
