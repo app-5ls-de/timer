@@ -118,21 +118,3 @@ button:focus {
   box-shadow: 0 0 0 0.2rem rgba(82, 88, 93, 0.5);
   outline: 0;
 }
-
-button#pomodoro-info {
-  height: fit-content;
-  width: fit-content;
-  background: transparent;
-  margin: 0 auto;
-  padding: 0.5rem;
-}
-
-span#info,
-button#pomodoro-info > span {
-  color: gray;
-}
-
-span#info,
-button#pomodoro-info {
-  display: none;
-}

@@ -10,8 +10,6 @@ var inner_clear = document.getElementById("inner-clear");
 var inner_back = document.getElementById("inner-back");
 var bt_plus = document.getElementById("plus");
 var bt_minus = document.getElementById("minus");
-var bt_pomodoroinfo = document.getElementById("pomodoro-info");
-var sp_pomodoroinfo = bt_pomodoroinfo.children[0];
 var sp_info = document.getElementById("info");
 
 if (window.localStorage.oldState == undefined) {
@@ -25,7 +23,6 @@ if (window.localStorage.settings == undefined) {
 }
 
 var displayed = {
-  pomodoro: false,
   info: false,
 };
 
@@ -45,16 +42,10 @@ class State {
   constructor() {
     this.state = "stopped";
     this.value = dayjs.duration(0);
-    this.pomodoro = {};
-    this.pomodoro.active = false;
-    this.pomodoro.minutes = 25;
   }
 
   loadState(options) {
     if (isobject(options)) {
-      if (options.pomodoro) {
-        this.pomodoro = options.pomodoro;
-      }
       if (options.state == "started") {
         let value = dayjs(options.value);
         if (value.isValid()) {
@@ -97,12 +88,10 @@ class State {
     return JSON.stringify({
       state: this.state,
       value: toISOString(this.value),
-      pomodoro: this.pomodoro,
     });
   }
 
   clear() {
-    this.pomodoro.active = false;
     this.stop(dayjs.duration(0));
     loadSettings(parse(window.localStorage.settings));
   }
@@ -227,20 +216,6 @@ class State {
 
     let millis = duration.asMilliseconds();
 
-    if (displayed.pomodoro) {
-      if (this.pomodoro.active == false || millis < 0) {
-        bt_pomodoroinfo.style.display = "none";
-        displayed.pomodoro = false;
-      }
-    } else {
-      if (this.pomodoro.active == true && millis > 0) {
-        sp_pomodoroinfo.textContent =
-          "+" + statemachine.pomodoro.minutes + "min";
-        bt_pomodoroinfo.style.display = "unset";
-        displayed.pomodoro = true;
-      }
-    }
-
     let textContent = "";
     if (millis < 0) {
       textContent = "-";
@@ -298,10 +273,9 @@ class State {
 
 function loadSettings(options) {
   if (isobject(options)) {
-    if (!statemachine.pomodoro.active) {
-      statemachine.pomodoro.minutes = options.pomodorominutes;
+    
       statemachine.saveState();
-    }
+    
   }
 }
 
@@ -320,14 +294,6 @@ if (isobject(parse(window.localStorage.oldState))) {
   inner_back.style.display = "unset";
 }
 
-bt_pomodoroinfo.addEventListener("click", () => {
-  if (statemachine.pomodoro.active) {
-    statemachine.clean();
-    statemachine.backup();
-    statemachine.pomodoro.active = false;
-    statemachine.add(statemachine.pomodoro.minutes, "minute");
-  }
-});
 
 bt_toggle.addEventListener("click", () => {
   statemachine.clean();
@@ -346,8 +312,7 @@ bt_clear.addEventListener("click", () => {
   } else if (
     !(
       statemachine.state == "stopped" &&
-      statemachine.value == 0 &&
-      !statemachine.pomodoro.active
+      statemachine.value == 0
     )
   ) {
     statemachine.clean();
@@ -374,8 +339,6 @@ bt_minus.addEventListener("long-press", function (e) {
 
   statemachine.clean();
   statemachine.backup();
-  statemachine.pomodoro.active = true;
-  statemachine.stop(dayjs.duration(-statemachine.pomodoro.minutes, "minute"));
   longpressed = new Date().getTime();
 
   if ("Notification" in window && Notification.permission !== "denied") {
@@ -383,7 +346,7 @@ bt_minus.addEventListener("long-press", function (e) {
   }
 });
 
-[bt_minus, bt_toggle, bt_clear, bt_plus, bt_pomodoroinfo].forEach(
+[bt_minus, bt_toggle, bt_clear, bt_plus].forEach(
   (dom_element) => {
     dom_element.addEventListener("mouseup", () => {
       dom_element.blur();
