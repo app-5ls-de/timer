@@ -53,7 +53,7 @@ var displayed = {
   info: false,
 };
 
-var updater_interval, longpressed;
+var updater_interval;
 
 function isobject(obj) {
   return !!(obj && typeof obj === "object" && Object.keys(obj).length > 0); //return a Boolean
@@ -341,6 +341,14 @@ bt_plus.addEventListener("click", () => {
   statemachine.add(1, "minute");
 });
 
+bt_plus.setAttribute("data-long-press-delay", 500);
+bt_plus.addEventListener("long-press", function (e) {
+  e.preventDefault();
+
+  statemachine.clean();
+  statemachine.add(10, "minutes");
+});
+
 bt_clear.addEventListener("click", () => {
   if (isobject(parse(window.localStorage.oldState))) {
     statemachine.restore();
@@ -363,25 +371,23 @@ bt_clear.addEventListener("long-press", function (e) {
 });
 
 bt_minus.addEventListener("click", () => {
-  if (!longpressed || new Date().getTime() - longpressed > 1000) {
-    statemachine.clean();
-    statemachine.add(-1, "minute");
-  }
+  statemachine.clean();
+  statemachine.add(-1, "minute");
+  
   audio.pause();
   audio.currentTime = 0;
-
+  
   if ("Notification" in window && Notification.permission !== "denied") {
     Notification.requestPermission();
   }
 });
 
-bt_minus.setAttribute("data-long-press-delay", 1000);
+bt_minus.setAttribute("data-long-press-delay", 500);
 bt_minus.addEventListener("long-press", function (e) {
   e.preventDefault();
 
   statemachine.clean();
-  statemachine.backup();
-  longpressed = new Date().getTime();
+  statemachine.add(-10, "minutes");
 });
 
 [bt_minus, bt_toggle, bt_clear, bt_plus].forEach(
