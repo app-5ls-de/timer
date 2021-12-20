@@ -12,6 +12,30 @@ var bt_plus = document.getElementById("plus");
 var bt_minus = document.getElementById("minus");
 var sp_info = document.getElementById("info");
 
+// The wake lock sentinel.
+let wakeLock = null;
+
+// Function that attempts to request a screen wake lock.
+const requestWakeLock = async () => {
+  try {
+    wakeLock = await navigator.wakeLock.request();
+    wakeLock.addEventListener('release', () => {
+      console.log('Screen Wake Lock released:', wakeLock.released);
+    });
+    console.log('Screen Wake Lock released:', wakeLock.released);
+  } catch (err) {
+    console.error(`${err.name}, ${err.message}`);
+  }
+};
+
+const handleVisibilityChange = async () => {
+  if (wakeLock !== null && document.visibilityState === 'visible') {
+    await requestWakeLock();
+  }
+};
+
+document.addEventListener('visibilitychange', handleVisibilityChange);
+
 
 var audio = new Audio('/gong.mp3');
 
@@ -186,6 +210,8 @@ class State {
     inner_stop.style.display = "unset";
     this.saveState();
     this.updater_start();
+
+    requestWakeLock();
   }
 
   stop(value) {
@@ -206,6 +232,9 @@ class State {
 
     audio.pause();
     audio.currentTime = 0;
+
+    if (wakeLock) wakeLock.release();
+    wakeLock = null;
   }
 
   display() {
