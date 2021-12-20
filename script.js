@@ -340,6 +340,10 @@ bt_minus.addEventListener("click", () => {
   }
   audio.pause();
   audio.currentTime = 0;
+
+  if ("Notification" in window && Notification.permission !== "denied") {
+    Notification.requestPermission();
+  }
 });
 
 bt_minus.setAttribute("data-long-press-delay", 1000);
@@ -349,10 +353,6 @@ bt_minus.addEventListener("long-press", function (e) {
   statemachine.clean();
   statemachine.backup();
   longpressed = new Date().getTime();
-
-  if ("Notification" in window && Notification.permission !== "denied") {
-    Notification.requestPermission();
-  }
 });
 
 [bt_minus, bt_toggle, bt_clear, bt_plus].forEach(
