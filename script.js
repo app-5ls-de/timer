@@ -354,12 +354,21 @@ bt_clear.addEventListener("long-press", function (e) {
 bt_minus.addEventListener("click", () => {
   statemachine.clean();
   statemachine.add(-1, "minute");
-  
+
   audio.pause();
   audio.currentTime = 0;
-  
+
   if ("Notification" in window && Notification.permission !== "denied") {
-    Notification.requestPermission();
+    let duration;
+    if (statemachine.state == "started") {
+      duration = dayjs.duration(dayjs().diff(statemachine.value));
+    } else if (statemachine.state == "stopped") {
+      duration = statemachine.value;
+    }
+
+    if (duration.asMilliseconds() < 0){
+      Notification.requestPermission();
+    }
   }
 });
 
