@@ -322,14 +322,6 @@ bt_plus.addEventListener("click", () => {
   statemachine.add(1, "minute");
 });
 
-bt_plus.setAttribute("data-long-press-delay", 500);
-bt_plus.addEventListener("long-press", function (e) {
-  e.preventDefault();
-
-  statemachine.clean();
-  statemachine.add(10, "minutes");
-});
-
 bt_clear.addEventListener("click", () => {
   if (isobject(parse(window.localStorage.oldState))) {
     statemachine.restore();
@@ -375,9 +367,12 @@ bt_minus.addEventListener("click", () => {
 bt_minus.setAttribute("data-long-press-delay", 500);
 bt_minus.addEventListener("long-press", function (e) {
   e.preventDefault();
-
   statemachine.clean();
-  statemachine.add(-10, "minutes");
+
+  if (statemachine.state == "stopped") {
+    statemachine.backup();
+    statemachine.stop(dayjs.duration(-25, "minutes"));
+  }
 });
 
 [bt_minus, bt_toggle, bt_clear, bt_plus].forEach(
