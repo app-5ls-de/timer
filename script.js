@@ -67,25 +67,26 @@ class State {
   }
 
   loadState(options) {
-    if (isobject(options)) {
-      if (options.state == "started") {
-        let value = dayjs(options.value);
-        if (value.isValid()) {
-          this.start(value);
-        }
-      } else if (options.state == "stopped") {
-        let value;
-        if (options.value[0] == "-") {
-          let absolute = dayjs
-            .duration(options.value.substring(1))
-            .asMilliseconds();
-          value = dayjs.duration(-absolute);
-        } else {
-          value = dayjs.duration(options.value);
-        }
-        if (dayjs.isDuration(value)) {
-          this.stop(value);
-        }
+    if (!isobject(options)) {
+      return;
+    }
+    if (options.state == "started") {
+      let value = dayjs(options.value);
+      if (value.isValid()) {
+        this.start(value);
+      }
+    } else if (options.state == "stopped") {
+      let value;
+      if (options.value[0] == "-") {
+        let absolute = dayjs
+          .duration(options.value.substring(1))
+          .asMilliseconds();
+        value = dayjs.duration(-absolute);
+      } else {
+        value = dayjs.duration(options.value);
+      }
+      if (dayjs.isDuration(value)) {
+        this.stop(value);
       }
     }
   }
