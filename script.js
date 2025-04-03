@@ -19,24 +19,23 @@ let wakeLock = null;
 // Function that attempts to request a screen wake lock.
 const requestWakeLock = async () => {
   try {
-    if ("wakeLock" in window ) {
+    if ("wakeLock" in window) {
       wakeLock = await navigator.wakeLock.request();
     }
   } catch (err) {
-    console.error(err.name+", "+err.message);
+    console.error(err.name + ", " + err.message);
   }
 };
 
 const handleVisibilityChange = async () => {
-  if (wakeLock !== null && document.visibilityState === 'visible') {
+  if (wakeLock !== null && document.visibilityState === "visible") {
     await requestWakeLock();
   }
 };
 
-document.addEventListener('visibilitychange', handleVisibilityChange);
+document.addEventListener("visibilitychange", handleVisibilityChange);
 
-
-var audio = new Audio('/gong.mp3');
+var audio = new Audio("/gong.mp3");
 
 if (window.localStorage.oldState == undefined) {
   window.localStorage.oldState = "{}";
@@ -349,7 +348,6 @@ if (isobject(parse(window.localStorage.oldState))) {
   inner_back.style.display = "unset";
 }
 
-
 bt_toggle.addEventListener("click", () => {
   statemachine.clean();
   statemachine.toggle();
@@ -364,12 +362,7 @@ bt_clear.addEventListener("click", () => {
   if (isobject(parse(window.localStorage.oldState))) {
     statemachine.restore();
     statemachine.clean();
-  } else if (
-    !(
-      statemachine.state == "stopped" &&
-      statemachine.value == 0
-    )
-  ) {
+  } else if (!(statemachine.state == "stopped" && statemachine.value == 0)) {
     statemachine.clean();
     statemachine.backup();
     statemachine.clear();
@@ -396,7 +389,7 @@ bt_minus.addEventListener("click", () => {
       duration = statemachine.value;
     }
 
-    if (duration.asMilliseconds() < 0){
+    if (duration.asMilliseconds() < 0) {
       Notification.requestPermission();
     }
   }
@@ -415,10 +408,8 @@ bt_minus.addEventListener("long-press", function (e) {
   }
 });
 
-[bt_minus, bt_toggle, bt_clear, bt_plus].forEach(
-  (dom_element) => {
-    dom_element.addEventListener("mouseup", () => {
-      dom_element.blur();
-    });
-  }
-);
+[bt_minus, bt_toggle, bt_clear, bt_plus].forEach((dom_element) => {
+  dom_element.addEventListener("mouseup", () => {
+    dom_element.blur();
+  });
+});
