@@ -5,7 +5,7 @@ const { registerRoute, setDefaultHandler } = workbox.routing;
 const { StaleWhileRevalidate, CacheFirst } = workbox.strategies;
 const { cacheNames, setCacheNameDetails } = workbox.core;
 
-setCacheNameDetails({ suffix: "v2" });
+setCacheNameDetails({ suffix: "v3" });
 
 registerRoute(new RegExp("\\.(json|svg|png|mp3|woff2?)$"), new CacheFirst());
 
