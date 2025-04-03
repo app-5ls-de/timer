@@ -11,6 +11,7 @@ var inner_back = document.getElementById("inner-back");
 var bt_plus = document.getElementById("plus");
 var bt_minus = document.getElementById("minus");
 var sp_info = document.getElementById("info");
+var body = document.body;
 
 // The wake lock sentinel.
 let wakeLock = null;
@@ -64,12 +65,16 @@ class State {
   constructor() {
     this.state = "stopped";
     this.value = dayjs.duration(0);
+    this.isPomodoro = false;
   }
 
   loadState(options) {
     if (!isobject(options)) {
       return;
     }
+
+    this.isPomodoro = options.isPomodoro ?? false;
+
     if (options.state == "started") {
       let value = dayjs(options.value);
       if (value.isValid()) {
@@ -111,10 +116,12 @@ class State {
     return JSON.stringify({
       state: this.state,
       value: toISOString(this.value),
+      isPomodoro: this.isPomodoro,
     });
   }
 
   clear() {
+    this.isPomodoro = false;
     this.stop(dayjs.duration(0));
   }
 
@@ -203,6 +210,7 @@ class State {
     this.saveState();
     this.updater_start();
 
+    this.updateBackgroundColor();
     requestWakeLock();
   }
 
@@ -225,6 +233,7 @@ class State {
     audio.pause();
     audio.currentTime = 0;
 
+    this.updateBackgroundColor();
     if (wakeLock) wakeLock.release();
     wakeLock = null;
   }
@@ -260,6 +269,7 @@ class State {
       if (millis > 0 && millis < 5000 && this.was_negative) {
         this.show_notification();
         audio.play();
+        this.updateBackgroundColor();
       }
       if (duration.seconds() % 5 == 0) {
         document.title = "Timer: " + textContent;
@@ -267,6 +277,33 @@ class State {
     }
 
     this.was_negative = millis < 0;
+  }
+
+  updateBackgroundColor() {
+    let color = "#000000";
+    if (!this.isPomodoro) {
+      body.style.backgroundColor = color;
+      return;
+    }
+
+    let duration;
+    if (this.state == "started") {
+      duration = dayjs.duration(dayjs().diff(this.value));
+    } else if (this.state == "stopped") {
+      duration = this.value;
+    }
+
+    if (duration.asMilliseconds() < 0) {
+      if (this.state === "stopped") {
+        color = "#ff8b94"; // red
+      }
+    } else {
+      if (this.state === "started") {
+        color = "#b8d8be"; // green
+      }
+    }
+
+    body.style.backgroundColor = color;
   }
 
   show_notification() {
@@ -372,7 +409,9 @@ bt_minus.addEventListener("long-press", function (e) {
 
   if (statemachine.state == "stopped") {
     statemachine.backup();
+    statemachine.isPomodoro = true;
     statemachine.stop(dayjs.duration(-25, "minutes"));
+    statemachine.saveState();
   }
 });
 
