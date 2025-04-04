@@ -215,11 +215,7 @@ class State {
 
   stop(value) {
     if (!value) {
-      if (this.state == "started") {
-        value = dayjs.duration(dayjs().diff(this.value));
-      } else if (this.state == "stopped") {
-        value = this.value;
-      }
+      value = this.getCurrentDuration();
     }
     this.state = "stopped";
     document.title = "Timer";
@@ -238,12 +234,7 @@ class State {
   }
 
   display() {
-    let duration;
-    if (this.state == "started") {
-      duration = dayjs.duration(dayjs().diff(this.value));
-    } else if (this.state == "stopped") {
-      duration = this.value;
-    }
+    let duration = this.getCurrentDuration();
 
     function pretty(num) {
       return num ? (num > 9 ? num : "0" + num) : "00";
@@ -278,6 +269,21 @@ class State {
     this.was_negative = millis < 0;
   }
 
+  getCurrentDuration() {
+    let duration;
+    if (this.state == "started") {
+      duration = dayjs.duration(dayjs().diff(this.value));
+    } else if (this.state == "stopped") {
+      duration = this.value;
+    }
+    return duration;
+  }
+
+  isCurrentDurationNegative() {
+    let duration = this.getCurrentDuration();
+    return duration.asMilliseconds() < 0;
+  }
+
   updateBackgroundColor() {
     let color = "#000000";
     if (!this.isPomodoro) {
@@ -285,14 +291,7 @@ class State {
       return;
     }
 
-    let duration;
-    if (this.state == "started") {
-      duration = dayjs.duration(dayjs().diff(this.value));
-    } else if (this.state == "stopped") {
-      duration = this.value;
-    }
-
-    if (duration.asMilliseconds() < 0) {
+    if (this.isCurrentDurationNegative()) {
       if (this.state === "stopped") {
         color = "#ff8b94"; // red
       }
