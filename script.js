@@ -302,7 +302,7 @@ class State {
       }
     } else {
       if (this.state === "started") {
-        color = "#b8d8be"; // green
+        color = "#a2caa9"; // green
       }
     }
 
