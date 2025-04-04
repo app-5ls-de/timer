@@ -49,7 +49,7 @@ var displayed = {
 };
 
 var updater_interval;
-
+const pomodoroDurationMinutes = 25;
 function isobject(obj) {
   return !!(obj && typeof obj === "object" && Object.keys(obj).length > 0); //return a Boolean
 }
@@ -216,6 +216,11 @@ class State {
   stop(value) {
     if (!value) {
       value = this.getCurrentDuration();
+    }
+    if (this.isPomodoro && value.asMilliseconds() > 0) {
+      this.backup();
+      this.isPomodoro = false;
+      value = value.add(pomodoroDurationMinutes, "minutes");
     }
     this.state = "stopped";
     document.title = "Timer";
@@ -402,7 +407,7 @@ bt_minus.addEventListener("long-press", function (e) {
   if (statemachine.state == "stopped") {
     statemachine.backup();
     statemachine.isPomodoro = true;
-    statemachine.stop(dayjs.duration(-25, "minutes"));
+    statemachine.stop(dayjs.duration(-pomodoroDurationMinutes, "minutes"));
     statemachine.saveState();
   }
 });
